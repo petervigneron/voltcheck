@@ -1,3 +1,5 @@
+import { isPlaceholderImage } from "@/lib/listings/placeholderImage";
+
 // /img/<vin>: a car's photo, served from censusev.com. The decisions live
 // here, pure or with fetch injected, so every branch is tested
 // (tests/img.test.ts); app/img/[vin]/route.ts does the lookup and the I/O.
@@ -147,6 +149,10 @@ export async function fetchImage(raw: string | undefined, fetchImpl: typeof fetc
   try {
     for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
       if (seen.has(url.href)) return { ok: false };
+      // A seller's "no photo yet" stand-in (lib/listings/placeholderImage.ts)
+      // is not this car, stored or reached by redirect: the card shows its
+      // plain block instead, as for a car with no photo at all.
+      if (isPlaceholderImage(url.href)) return { ok: false };
       seen.add(url.href);
       const res = await fetchImpl(url.href, {
         method: "GET",

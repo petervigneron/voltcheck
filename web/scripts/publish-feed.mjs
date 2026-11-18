@@ -33,6 +33,7 @@ import { SHARDS, packIndex, shardArtifactName, shardOfId } from "../lib/listings
 import { worthTrimTally } from "../lib/listings/tally.ts";
 import { buildHubIndex } from "../lib/listings/hubIndex.ts";
 import { buildApiArtifacts } from "../lib/api/records.ts";
+import { loadZipStates } from "../lib/zipState.ts";
 import { packPro, publicRows } from "../lib/listings/proSignals.ts";
 import { packIdentity } from "../lib/listings/enrich.ts";
 import { seal } from "../lib/listings/proSeal.ts";
@@ -122,7 +123,7 @@ await upload("hubs", JSON.stringify(buildHubIndex(rows)));
 // last: readers gate on the manifest, so a publish that dies halfway leaves
 // the previous coherent set in place.
 const publishedAt = new Date().toISOString();
-const api = buildApiArtifacts(listings, enriched, rows, publishedAt);
+const api = buildApiArtifacts(listings, enriched, rows, publishedAt, await loadZipStates());
 for (const [slug, recs] of api.partitions) await upload(`api-make-${slug}`, JSON.stringify(recs));
 await upload("api-index", JSON.stringify(api.index));
 await upload("api-manifest", JSON.stringify(api.manifest));

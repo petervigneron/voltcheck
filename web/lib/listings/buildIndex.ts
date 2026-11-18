@@ -1,5 +1,5 @@
 import { allListingsWithOrigin, type FeedOrigin } from "./source";
-import { displayTrim, enrichListing, packIdentity, specTrim } from "./enrich";
+import { enrichListing, packIdentity, specTrim } from "./enrich";
 import type { EnrichedListing } from "./enrich";
 import type { Listing } from "./types";
 import { listingTiles } from "./tiles";
@@ -9,7 +9,7 @@ import { hasRealPrice, priceCut } from "./price";
 import { askVsMarket, askVsSold, buildAskIndex, cohortIdentityMixed, fetchCompIndex } from "./comps";
 import { trimClaim } from "./trimClaim";
 import { zipCoords } from "@/lib/zips";
-import type { CardRow } from "./card";
+import { carTitle, type CardRow } from "./card";
 import { cardIncentive, matchIncentives } from "@/lib/incentives/match";
 
 // Everything the browse grid needs, computed once per revalidation instead of
@@ -81,7 +81,7 @@ export async function buildCardIndex(): Promise<{
     // shopper filtering on "Lariat" would never see the Lariat that a feed
     // mislabelled "Pro".
     const claim = trimClaim(l);
-    const trim = claim.assert ? displayTrim(l) : undefined;
+    const trim = claim.assert ? specTrim(l) : undefined;
     const cut = priceCut(l);
     const real = hasRealPrice(l);
     // A disclosed manufacturer repurchase gets no price claim on either
@@ -112,7 +112,8 @@ export async function buildCardIndex(): Promise<{
       year: l.year,
       make: l.make,
       model: l.model,
-      title: `${l.year} ${l.make} ${l.model}${trim ? ` ${trim}` : ""}`,
+      // Rebuilt from the folded trim once canonicalizeTrims has run (below).
+      title: carTitle(l.year, l.make, l.model, trim),
       priceUsd: l.priceUsd,
       realPrice: real,
       cut: cut ? { amountUsd: cut.amountUsd, at: cut.at, prevUsd: l.prevPriceUsd! } : undefined,
@@ -133,7 +134,7 @@ export async function buildCardIndex(): Promise<{
       state: l.state,
       loc: await zipCoords(l.zip),
       imageUrl: l.imageUrl,
-      trim: claim.assert ? specTrim(l) : undefined,
+      trim,
       kwh: e.packKwh ? Math.round(e.packKwh.value) : undefined,
       rangeMi: e.realRangeMi?.value,
       heatPump: e.heatPump?.status,
@@ -155,6 +156,10 @@ export async function buildCardIndex(): Promise<{
     });
   }
   canonicalizeTrims(rows);
+  // The title names the trim the chip does, in the chip's spelling: "PRO" at
+  // one dealer and "Pro" at the next are one trim on the facet, so they are
+  // one title too.
+  for (const r of rows) r.title = carTitle(r.year, r.make, r.model, r.trim);
   return { rows, origin, listings, enriched, trimKeys };
 }
 

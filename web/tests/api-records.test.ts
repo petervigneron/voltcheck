@@ -109,3 +109,43 @@ test("the model list has one entry per model, in the spelling most sellers use",
   // Different cars stay apart: the plus is identity (lib/listings/modelName.ts).
   assert.deepEqual(foldModels({ "EQS 450+": 3, "EQS 450": 2 }), { "EQS 450+": 3, "EQS 450": 2 });
 });
+
+// Audit, 2026-11-18: 8.8% of API titles restated the feed's raw trim string
+// ("2027 Toyota bZ Woodland New 2027 Toyota bZ Woodland  AWD") while `trim`
+// was clean or absent. The title is year, make, model and the record's own
+// trim, whatever else the feed wrote.
+test("title: year, make, model and the record's trim — never the feed's raw trim string", () => {
+  const bz: Listing = { ...model3, make: "Toyota", model: "bZ Woodland", year: 2027, trim: "New 2027 Toyota bZ Woodland  AWD" };
+  assert.equal(toApiListing(enrichListing(bz), { realPrice: true }).title, "2027 Toyota bZ Woodland");
+  assert.equal(toApiListing(enrichListing(model3), { realPrice: true, trim: "Standard Range Plus" }).title, "2021 Tesla Model 3 Standard Range Plus");
+});
+
+// Audit, 2026-11-18: 1,921 sampled cars carried a ZIP and no city; some had no
+// state either. The state comes from the ZIP table, exact ZIPs only; no city
+// is ever made up.
+test("location: a missing state is filled from the ZIP table; a stated one is never replaced; no city is invented", () => {
+  const noState = { ...model3, city: undefined, state: undefined, zip: "33023" };
+  const enriched = new Map([[model3.vin, enrichListing(noState)]]);
+  const rows: CardRow[] = [{ id: model3.id, hay: "", year: 2021, make: "Tesla", model: "Model 3", title: "", priceUsd: 23990, realPrice: true, tiles: [] }];
+  const table = { "33023": "FL", "75201": "TX" };
+  const rec = buildApiArtifacts([noState], enriched, rows, "2026-11-18T00:00:00Z", table).partitions.get("tesla")![0];
+  assert.deepEqual(rec.location, { state: "FL", zip: "33023" });
+  // The listing's own state stands, even where the table disagrees.
+  const stated = { ...noState, state: "GA" };
+  const rec2 = buildApiArtifacts([stated], new Map([[model3.vin, enrichListing(stated)]]), rows, "2026-11-18T00:00:00Z", table).partitions.get("tesla")![0];
+  assert.equal(rec2.location.state, "GA");
+  // A ZIP the table does not have, and no table at all: nothing.
+  const unknown = { ...noState, zip: "00000" };
+  assert.equal(buildApiArtifacts([unknown], new Map([[model3.vin, enrichListing(unknown)]]), rows, "x", table).partitions.get("tesla")![0].location.state, undefined);
+  assert.equal(buildApiArtifacts([noState], enriched, rows, "x").partitions.get("tesla")![0].location.state, undefined);
+  // The index row's state filter sees the filled state too.
+  assert.equal(buildApiArtifacts([noState], enriched, rows, "x", table).index.r[0][7], "FL");
+});
+
+test("image_url: a seller's placeholder is omitted; a photo or a maker's render is kept", () => {
+  const rec = (imageUrl: string) => toApiListing(enrichListing({ ...model3, imageUrl }), { realPrice: true }).image_url;
+  assert.equal(rec("https://images.dealer.com/unavailable_stockphoto.png"), undefined);
+  assert.equal(rec("https://images.dealersync.com/2074/Photos/comingsoon/62a1c0cae8e9459ab266df104e53e0ac.jpg"), undefined);
+  assert.equal(rec("https://pictures.dealer.com/t/texascars/1234/abc.jpg"), "https://pictures.dealer.com/t/texascars/1234/abc.jpg");
+  assert.equal(rec("https://cgi.cadillac.com/mmgprod-us/dynres/prove/image.gen?i=2025/6DE26/6DE26__3LT/GBA_0ST_1SG.jpg"), "https://cgi.cadillac.com/mmgprod-us/dynres/prove/image.gen?i=2025/6DE26/6DE26__3LT/GBA_0ST_1SG.jpg");
+});

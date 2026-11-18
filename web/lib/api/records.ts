@@ -1,8 +1,10 @@
 import type { EnrichedListing } from "@/lib/listings/enrich";
 import type { Listing } from "@/lib/listings/types";
-import type { CardRow } from "@/lib/listings/card";
+import { carTitle, type CardRow } from "@/lib/listings/card";
+import { isPlaceholderImage } from "@/lib/listings/placeholderImage";
 import { vehicleKind, type VehicleKind } from "@/lib/listings/kind";
 import { modelKey } from "@/lib/listings/modelName";
+import { zipStateLookup } from "@/lib/zipState";
 
 // The public read API's record — /api/v1/listings, /api/v1/listings/{vin}
 // and the MCP tools all hand back this shape, built by one function so no
@@ -95,8 +97,10 @@ export interface RecordExtras {
   loc?: [number, number];
   body?: string;
   trim?: string;
-  /** The card's own title when the caller has one; otherwise built from trim. */
-  title?: string;
+  /** The ZIP's state from the bundled ZIP table (lib/zips.ts zipStateLookup),
+   *  for a listing that names a ZIP and no state. Absent when the table does
+   *  not have the ZIP. */
+  zipState?: string;
 }
 
 export function toApiListing(e: EnrichedListing, x: RecordExtras): ApiListing {
@@ -118,7 +122,9 @@ export function toApiListing(e: EnrichedListing, x: RecordExtras): ApiListing {
     year: l.year,
     make: l.make,
     model: l.model,
-    title: x.title ?? `${l.year} ${l.make} ${l.model}${x.trim ? ` ${x.trim}` : ""}`,
+    // Built here from the same trim the record prints, never passed in: the
+    // feed's raw trim string is not a title (lib/listings/card.ts carTitle).
+    title: carTitle(l.year, l.make, l.model, x.trim),
     price_usd: x.realPrice ? l.priceUsd : null,
     location: {},
     seller: { type: l.sellerType },
@@ -139,7 +145,16 @@ export function toApiListing(e: EnrichedListing, x: RecordExtras): ApiListing {
   if (l.mileage != null) rec.mileage = l.mileage;
   if (l.exteriorColor) rec.exterior_color = l.exteriorColor;
   if (l.city) rec.location.city = l.city;
-  if (l.state) rec.location.state = l.state;
+  // A listing that names a ZIP and no state: the ZIP's own state, from the
+  // table the rebate territory already reads (data/utility-zips.json, exact
+  // ZIPs only, never its 3-digit prefix fallback). Control, 2026-11-18, 944
+  // API cars carrying both a ZIP and a state the table knows: 935 agree, and
+  // all 9 that differ are the listing's error ("GA" on Hollywood FL 33023,
+  // "OH" on Jacksonville FL 32216, "Georgia" spelled out). No city: the
+  // site has no ZIP-to-place table, and a city is not guessed from
+  // coordinates or a dealer's name.
+  const state = l.state ?? x.zipState;
+  if (state) rec.location.state = state;
   if (l.zip) rec.location.zip = l.zip;
   if (x.loc) {
     rec.location.lat = x.loc[0];
@@ -149,7 +164,9 @@ export function toApiListing(e: EnrichedListing, x: RecordExtras): ApiListing {
   const dom = domainish(l.dealerDomain);
   if (dom) rec.seller.domain = dom;
   if (l.sourceUrl) rec.seller.url = l.sourceUrl;
-  if (l.imageUrl) rec.image_url = l.imageUrl;
+  // A seller's "no photo yet" stand-in is not a photo of this car
+  // (lib/listings/placeholderImage.ts); the record goes without.
+  if (l.imageUrl && !isPlaceholderImage(l.imageUrl)) rec.image_url = l.imageUrl;
   if (e.packKwh) rec.battery = { kwh: Math.round(e.packKwh.value), basis: e.packKwh.basis, estimated: e.packKwh.estimated };
   // A listing that could be one of several versions (enrichment.candidates)
   // has no single range to quote; the card prints a span, the API prints
@@ -243,7 +260,9 @@ export function buildApiArtifacts(
   listings: Listing[],
   enriched: Map<string, EnrichedListing>,
   rows: CardRow[],
-  asOf: string
+  asOf: string,
+  /** ZIP → state (lib/zips.ts loadZipStates); without it no state is filled. */
+  zipStates?: Record<string, string>
 ): { index: ApiIndex; partitions: Map<string, ApiListing[]>; manifest: ApiManifest } {
   const byId = new Map(rows.map((r) => [r.id, r]));
   const partitions = new Map<string, ApiListing[]>();
@@ -253,7 +272,14 @@ export function buildApiArtifacts(
     const row = byId.get(l.id);
     const e = enriched.get(l.vin);
     if (!row || !e) continue;
-    const rec = toApiListing(e, { realPrice: row.realPrice, cut: row.cut, loc: row.loc, body: row.body, trim: row.trim, title: row.title });
+    const rec = toApiListing(e, {
+      realPrice: row.realPrice,
+      cut: row.cut,
+      loc: row.loc,
+      body: row.body,
+      trim: row.trim,
+      zipState: l.state ? undefined : zipStateLookup(zipStates, l.zip),
+    });
     const slug = makeSlug(rec.make);
     let part = partitions.get(slug);
     if (!part) partitions.set(slug, (part = []));

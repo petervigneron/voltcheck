@@ -16,6 +16,7 @@ import { inventoryBrandedFor } from "./lib/branded-title-dealers.mjs";
 import { splitTeslaModel } from "./lib/tesla-nameplate.mjs";
 import { untrustedModel } from "./lib/model-trust.mjs";
 import { cut } from "./lib/well-formed.mjs";
+import { dealerNameFor, registryRooftopNames } from "./lib/registry-name.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
 // Single-rooftop dealers have exactly one address — listings inherit it from
@@ -23,6 +24,14 @@ const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta
 // Group sites (many rooftops per domain) get no registry location on purpose.
 const registry = JSON.parse(await readFile(new URL("./registry/registry.json", import.meta.url), "utf-8"));
 const domainLoc = new Map(registry.sites.filter((x) => x.location).map((x) => [x.domain, x.location]));
+// The same fallback for the seller's NAME: a car whose page stated none takes
+// its rooftop's registry name, only where that name is spelled out in the
+// domain (lib/registry-name.mjs says why, and what the registry's names are).
+// OFF until switched on deliberately: a filled name can satisfy ingest_listings'
+// "home rooftop" rule (0103) and move a co-listed car's headline, price and
+// seller on the first night — see lib/registry-name.mjs before flipping it.
+const REGISTRY_NAME_FILL = false;
+const rooftopNames = REGISTRY_NAME_FILL ? registryRooftopNames(registry) : new Map();
 
 // Every lane lands here — crawl's shards and oem-locator's both, via
 // merge-shards — so this is the one place that sees a string from all of them.
@@ -291,7 +300,7 @@ const listings = raw
       city: r.city ?? domainLoc.get(r.dealerDomain)?.city ?? undefined,
       state: r.state ?? domainLoc.get(r.dealerDomain)?.state ?? undefined,
       zip: r.zip ?? domainLoc.get(r.dealerDomain)?.zip ?? undefined,
-      dealerName: clean(r.dealerName) ?? undefined,
+      dealerName: dealerNameFor(clean(r.dealerName) ?? undefined, r.dealerDomain, rooftopNames),
       optionCodes: r.optionCodes ?? undefined,
       // Per-VIN battery coverage and pack-replacement history from the maker's
       // own owner portal (gm-warranty.mjs). Both are stable per car — dates and

@@ -4,7 +4,8 @@ import { toApiListing, withPriceHistory, type ApiListing, type ApiListingDetail,
 import { modelKey, preferredForm } from "@/lib/listings/modelName";
 import { zipCoords } from "@/lib/zips";
 import { findListing } from "@/lib/listings/source";
-import { enrichListing, displayTrim, specTrim, type EnrichedListing } from "@/lib/listings/enrich";
+import { enrichListing, specTrim, type EnrichedListing } from "@/lib/listings/enrich";
+import { loadZipStates, zipStateLookup } from "@/lib/zipState";
 import type { Listing } from "@/lib/listings/types";
 import { trimClaim } from "@/lib/listings/trimClaim";
 import { hasRealPrice, priceCut } from "@/lib/listings/price";
@@ -193,14 +194,13 @@ export async function liveListingByVin(
   const e = enrichListing(l);
   const claim = trimClaim(l);
   const trim = claim.assert ? specTrim(l) : undefined;
-  const shown = claim.assert ? displayTrim(l) : undefined;
   const rec = toApiListing(e, {
     realPrice: hasRealPrice(l),
     cut: priceCut(l) ?? undefined,
     loc: await zipCoords(l.zip),
     body: bodyTypeOf(l),
     trim,
-    title: `${l.year} ${l.make} ${l.model}${shown ? ` ${shown}` : ""}`,
+    zipState: l.state ? undefined : zipStateLookup(await loadZipStates(), l.zip),
   });
   return { record: { ...withPriceHistory(rec, l), as_of: new Date().toISOString() }, listing: l, enriched: e };
 }

@@ -11,6 +11,21 @@ import type { BodyType } from "@/lib/filters";
 //
 // This module is client-safe: types and pure scoring only, no data imports.
 
+/**
+ * A car's title: year, make, model, and the classifier trim (CardRow.trim /
+ * the API's `trim`: trimClaim-gated, specTrim-spelled) when there is one —
+ * nothing else. It used to carry displayTrim(), the feed's raw string, and the
+ * raw string is where dealers put everything that isn't a trim: 8.8% of cars
+ * sampled from the API on 2026-11-18 had titles like "2027 Toyota bZ Woodland
+ * New 2027 Toyota bZ Woodland  AWD" or "… OPTIQ Luxury *SUPER CRUISE,
+ * NAVIGATION, …", while their `trim` was clean or absent. One function, so the
+ * card, the model pages' JSON-LD, the API record and the in-chat card cannot
+ * print two different names for one car.
+ */
+export function carTitle(year: number, make: string, model: string, trim?: string): string {
+  return `${year} ${make} ${model}${trim ? ` ${trim}` : ""}`;
+}
+
 export interface CardTile {
   k: TileKind;
   t: string;
@@ -29,7 +44,7 @@ export interface CardRow {
   year: number;
   make: string;
   model: string;
-  /** Display title, cab-style pseudo-trims already stripped. */
+  /** Display title: carTitle() of year, make, model and `trim` below. */
   title: string;
   priceUsd: number;
   /** Passed the junk-price floor (lease payments, accessory totals). */

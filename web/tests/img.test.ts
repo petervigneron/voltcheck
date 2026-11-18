@@ -151,3 +151,18 @@ test("headers: CDN-cacheable, inert, framable cross-origin; a miss says nothing"
   assert.equal("set-cookie" in IMG_HEADERS, false);
   assert.equal(MISS_HEADERS["x-robots-tag"], "noindex");
 });
+
+// 2026-11-18: a seller's "no photo yet" stand-in is not the car; the card
+// shows its plain block instead (lib/listings/placeholderImage.ts).
+test("fetchImage: a placeholder is refused, stored or reached by redirect, and is never fetched", async () => {
+  const png = { status: 200, headers: { "content-type": "image/png" }, body: [new Uint8Array([1, 2, 3])] };
+  const direct = fakeFetch({ "https://images.dealer.com/unavailable_stockphoto.png": png });
+  assert.deepEqual(await fetchImage("https://images.dealer.com/unavailable_stockphoto.png", direct.f), { ok: false });
+  assert.equal(direct.calls.length, 0);
+  const hop = fakeFetch({
+    "https://photos.dealer.example/123.jpg": { status: 302, headers: { location: "https://images.dealersync.com/1/Photos/comingsoon/a.jpg" } },
+    "https://images.dealersync.com/1/Photos/comingsoon/a.jpg": png,
+  });
+  assert.deepEqual(await fetchImage("https://photos.dealer.example/123.jpg", hop.f), { ok: false });
+  assert.equal(hop.calls.length, 1);
+});
