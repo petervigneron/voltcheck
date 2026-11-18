@@ -2,8 +2,9 @@
 // assistants that search with it) which pages changed. Runs after every
 // publish (publish-feed.yml): the static pages, model hubs and fact sheets,
 // whose numbers move with the feed, plus the listings Census first saw since
-// the previous publish. `--all` submits every listing as well — a first run,
-// or a domain change. A search engine that has to discover 166k pages by
+// the previous publish and the listings whose asking price dropped since then
+// (lib/listings/indexnowPicks.ts says which drops the shards can show).
+// `--all` submits every listing as well — a first run, or a domain change. A search engine that has to discover 166k pages by
 // crawling a day-old domain never will; this hands it the list.
 //
 // The key is public by design: the protocol proves control of the host by
@@ -20,6 +21,7 @@
 // committed key), INDEXNOW_SINCE_HOURS (default 7: five publishes a day plus slack).
 import { unpackIndex } from "../lib/listings/pack.ts";
 import { fetchServedShards } from "../lib/listings/servedShards.ts";
+import { firstSeenSince, priceDroppedSince } from "../lib/listings/indexnowPicks.ts";
 
 const ORIGIN = (process.env.SITE_ORIGIN || "https://censusev.com").replace(/\/$/, "");
 const HOST = new URL(ORIGIN).host;
@@ -45,13 +47,16 @@ const shards = (await fetchServedShards(ORIGIN)).map(unpackIndex);
 const seen = new Set();
 const rows = shards.flat().filter((r) => !seen.has(r.id) && (seen.add(r.id), true));
 const since = Date.now() - SINCE_H * 3_600_000;
-const listings = rows
-  .filter((r) => ALL || (r.firstSeenAt && Date.parse(r.firstSeenAt) > since))
-  .map((r) => `${ORIGIN}/listing/${r.id}`);
+const listingUrl = (id) => `${ORIGIN}/listing/${id}`;
+const listings = (ALL ? rows.map((r) => r.id) : firstSeenSince(rows, since)).map(listingUrl);
+// A price drop is a change Bing should re-read even on a car it already
+// knows. Counted on its own; a car both new and cut is announced once.
+const drops = ALL ? [] : priceDroppedSince(rows, since).map(listingUrl);
 
-const urls = [...new Set([...statics, ...listings])];
+const urls = [...new Set([...statics, ...listings, ...drops])];
 console.log(
-  `indexnow: ${statics.length} static/hub/fact pages + ${listings.length} listings (${ALL ? "all" : `first seen in the last ${SINCE_H}h`}) = ${urls.length} URLs`,
+  `indexnow: ${statics.length} static/hub/fact pages + ${listings.length} listings (${ALL ? "all" : `first seen in the last ${SINCE_H}h`})` +
+    `${ALL ? "" : ` + ${drops.length} price drops in the last ${SINCE_H}h`} = ${urls.length} URLs`,
 );
 if (DRY || urls.length === 0) process.exit(0);
 

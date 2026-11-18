@@ -135,3 +135,43 @@ const table = (title, list) => {
 };
 table("Where visits came from", cur.sources);
 table("First page of a visit", cur.landingPages);
+
+// AI assistants that fetched the site (web/proxy.ts counts them by name and
+// page kind into agent_fetches, migration 0127): a separate count from the
+// people above, which never include them. Days are UTC, so the window is the
+// report's last DAYS dates, today included. Prints nothing when nothing was
+// counted — and nothing, with a note on stderr, if the table is not there
+// yet, so the rest of the report is never lost to it.
+try {
+  const fetches = await rows("agent_fetches", `select=agent,kind,n&day=gt.${day(start)}&day=lte.${day(now)}`);
+  const byAgent = new Map();
+  for (const f of fetches) {
+    const a = byAgent.get(f.agent) ?? { total: 0, kinds: new Map() };
+    a.total += Number(f.n);
+    a.kinds.set(f.kind, (a.kinds.get(f.kind) ?? 0) + Number(f.n));
+    byAgent.set(f.agent, a);
+  }
+  const ranked = [...byAgent].filter(([, a]) => a.total > 0).sort((x, y) => y[1].total - x[1].total);
+  const print = ([agent, a]) => {
+    const top = [...a.kinds].sort((x, y) => y[1] - x[1]).slice(0, 3).map(([k, n]) => `${k} ${n}`).join(", ");
+    console.log(`  ${agent.padEnd(20)} ${String(a.total).padStart(7)}  ${top}`);
+  };
+  if (ranked.length) {
+    // A "-user" label is a fetch an assistant made because a person asked
+    // it something (web/lib/aiAgents.ts); the rest are crawlers.
+    const forPeople = ranked.filter(([agent]) => agent.endsWith("-user"));
+    const crawlers = ranked.filter(([agent]) => !agent.endsWith("-user"));
+    console.log("");
+    console.log("AI assistants reading the site");
+    if (forPeople.length) {
+      console.log(" Fetched for a person asking an assistant");
+      forPeople.forEach(print);
+    }
+    if (crawlers.length) {
+      console.log(" Crawlers");
+      crawlers.forEach(print);
+    }
+  }
+} catch (e) {
+  console.error(`visit-report: AI assistant counts skipped: ${e.message}`);
+}

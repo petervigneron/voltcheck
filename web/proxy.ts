@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
+import { aiAgentLabel, pageKind } from "@/lib/aiAgents";
 import { AT_COOKIE, RT_COOKIE, clearedCookies, needsRefresh, refreshSession, sessionCookies } from "@/lib/authCore";
 
 // Keeps a signed-in shopper signed in. The access token (vc_at) lasts an
@@ -20,8 +21,43 @@ import { AT_COOKIE, RT_COOKIE, clearedCookies, needsRefresh, refreshSession, ses
 // on every write. A refresh that fails because GoTrue is unreachable leaves
 // the cookies alone; the access token may still be good for a while, and if
 // it is not, the page renders signed out for this one request.
+//
+// It also runs, by the matcher's second entry, when the user-agent names a
+// known AI assistant (lib/aiAgents.ts) — and for those it does one thing:
+// counts the fetch by assistant and page kind (migration 0127) after the
+// response has gone, and passes the request through exactly as it came.
+// NextResponse.next() with no arguments: no cookie, no header, no rewrite,
+// so the CDN serves whatever it would have served without the proxy. The
+// session logic below is skipped for them outright, so a sitemap or a feed
+// shard fetched by a crawler that happens to carry vc_rt can never pick up a
+// Set-Cookie here.
 
-export async function proxy(req: NextRequest): Promise<NextResponse> {
+/** One count per fetch, after the response. Short timeout, never throws: a
+ *  lost count is a smaller cost than a slower page for the assistant. */
+async function countAgentFetch(agent: string, kind: string): Promise<void> {
+  const base = process.env.SUPABASE_URL?.replace(/\/$/, "");
+  const key = process.env.SUPABASE_ANON_KEY;
+  if (!base || !key) return;
+  try {
+    await fetch(`${base}/rest/v1/rpc/agent_fetch_bump`, {
+      method: "POST",
+      headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ _agent: agent, _kind: kind }),
+      cache: "no-store",
+      signal: AbortSignal.timeout(1500),
+    });
+  } catch {
+    // Fail soft by design.
+  }
+}
+
+export async function proxy(req: NextRequest, event?: NextFetchEvent): Promise<NextResponse> {
+  const agent = aiAgentLabel(req.headers.get("user-agent"));
+  if (agent) {
+    event?.waitUntil(countAgentFetch(agent, pageKind(req.nextUrl.pathname)));
+    return NextResponse.next();
+  }
+
   const at = req.cookies.get(AT_COOKIE)?.value;
   const rt = req.cookies.get(RT_COOKIE)?.value;
   if (!needsRefresh(at, rt, Math.floor(Date.now() / 1000))) return NextResponse.next();
@@ -55,6 +91,24 @@ export const config = {
       source:
         "/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap|img/|api/(?:index|events|zip|whereami|revalidate|stripe|auth/email)|.*\\.(?:png|jpg|jpeg|gif|svg|ico|txt|xml|webmanifest)$).*)",
       has: [{ type: "cookie", key: "vc_rt" }],
+    },
+    // Known AI assistants only (lib/aiAgents.ts AI_AGENT_TOKENS — keep in
+    // step; tests/ai-agents.test.ts holds the two together). Next anchors the
+    // value as ^…$ and matches case-sensitively, hence the leading/trailing
+    // .* and Meta's spelled-out case: its user-agents are lower-case. Assets
+    // are excluded by path so a page's images and scripts are not counted;
+    // robots.txt, llms.txt and the sitemaps are counted on purpose.
+    {
+      source:
+        "/((?!_next/|img/|favicon\\.ico$|.*(?:opengraph|twitter)-image|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp|avif|woff2?|ttf|otf|css|js|map|webmanifest)$).*)",
+      has: [
+        {
+          type: "header",
+          key: "user-agent",
+          value:
+            ".*(?:GPTBot|OAI-SearchBot|ChatGPT-User|ClaudeBot|Claude-SearchBot|Claude-User|PerplexityBot|Perplexity-User|Google-Extended|GoogleOther|Applebot-Extended|Amazonbot|[Mm]eta-[Ee]xternal(?:[Aa]gent|[Ff]etcher)|Bytespider|CCBot|MistralAI-User|DuckAssistBot|cohere-ai).*",
+        },
+      ],
     },
   ],
 };
