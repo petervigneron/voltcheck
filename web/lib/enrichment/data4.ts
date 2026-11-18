@@ -3452,10 +3452,19 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "leaf-2013", make: "NISSAN", model: "Leaf", modelYears: [2013, 2013],
+    // Until 2026-11-18 this row said heatPump "standard" for every 2013 LEAF,
+    // under a note that itself read "(SV/SL)". The row spans all grades, so
+    // every 2013 S on the site printed a heat pump it does not have: found
+    // when the cheapest cars on the new "with a heat pump" page turned out to
+    // be 2013 LEAF S. Treated now exactly as the 2017 row is: the row cannot
+    // say which grade a car is, so it says nothing, and the per-grade values
+    // are kept for the day a 2013 row is split by grade. S is left out of the
+    // map on purpose: no document was read for it here, only for SV/SL.
+    abstains: { heatPump: "Varies by grade: the hybrid heater system came with the MY2013 SV and SL, and this row spans all grades" },
     battery: { packGrossKwh: f(24, "mfr", "high") },
     range: { epaRangeMi: f(75, "mfr", "high", "MY2013 (24 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=33558") },
     charging: { portStandard: f("CHAdeMO", "mfr", "high", "DC fast charging optional (standard on SV/SL); CHAdeMO where fitted") },
-    thermal: { heatPump: f("standard", "mfr", "high", "Hybrid heat pump system from MY2013 (SV/SL)") },
+    thermal: { heatPumpByTrim: { SV: "standard", SL: "standard" } },
     warranty: { batteryYears: fb(8, "mfr", "high", undefined, LEAF_WB(2013)), batteryMiles: fb(100_000, "mfr", "high", undefined, LEAF_WB(2013)), sohFloorPct: fb(70, "mfr", "high", "Below nine bars, capacity coverage runs 60 months or 60,000 miles", LEAF_WB(2013)) },
   },
   {
