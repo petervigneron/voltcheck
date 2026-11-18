@@ -17,7 +17,16 @@ const nextConfig: NextConfig = {
       {
         source: "/ev/:make/:model/near/:zip",
         missing: [{ type: "header", key: "rsc" }],
-        headers: [{ key: "Cache-Control", value: "public, s-maxage=3600, stale-while-revalidate=86400" }],
+        headers: [
+          { key: "Cache-Control", value: "public, s-maxage=3600, stale-while-revalidate=86400" },
+          // On Vercel the line above did nothing: the first deploy answered
+          // `private, no-cache, no-store` with x-vercel-cache MISS twice
+          // running (2026-11-18), because the function's own Cache-Control
+          // replaces a config header of the same name. The CDN reads this
+          // one in preference to Cache-Control and the page runtime does
+          // not write it, so it is the header that can survive.
+          { key: "Vercel-CDN-Cache-Control", value: "public, s-maxage=3600, stale-while-revalidate=86400" },
+        ],
       },
     ];
   },
