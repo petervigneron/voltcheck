@@ -6,13 +6,14 @@ import { listingTiles } from "./tiles";
 import { bodyTypeOf } from "./bodyType";
 import { vehicleKind } from "./kind";
 import { hasRealPrice, priceCut } from "./price";
-import { askVsMarket, askVsSold, buildAskIndex, cohortIdentityMixed, fetchCompIndex } from "./comps";
+import { askVsMarket, askVsSold, buildAskIndex, cohortIdentityMixed, fetchCompIndex, type CompIndex } from "./comps";
 import { trimClaim } from "./trimClaim";
 import { zipCoords } from "@/lib/zips";
 import { carTitle, type CardRow } from "./card";
 import { cardIncentive, matchIncentives } from "@/lib/incentives/match";
 import { similarBand, type SimilarBand } from "./similarBand";
 import type { RecentAsk } from "./recentAsks";
+import { buildNewCarIndex, newCarBand, type NewCarInput } from "./newCarBand";
 
 // Everything the browse grid needs, computed once per revalidation instead of
 // once per request: enrichment, tiles, body type, zip centroid, price-cut
@@ -82,28 +83,7 @@ export async function buildCardIndex(opts?: { bands: true; recent?: RecentAsk[] 
       .filter((l) => !l.buybackDisclosed && !l.brandedTitleDisclosed)
       .map((l) => ({ ...l, trimKey: trimKeys.get(l.vin), identity: packIdentity(enriched.get(l.vin)!) }))
   );
-  // The band's own pool index: the same live peers, plus each car's stated
-  // drive and the recent cars. A separate index so askVsMarket is never
-  // handed a car that is no longer listed.
-  const bands = new Map<string, SimilarBand>();
-  if (opts?.bands) {
-    const bandAsks = buildAskIndex([
-      ...listings
-        .filter((l) => !l.buybackDisclosed && !l.brandedTitleDisclosed)
-        .map((l) => {
-          const e = enriched.get(l.vin)!;
-          return { ...l, trimKey: trimKeys.get(l.vin), identity: packIdentity(e), drive: l.drive ?? e.row?.drive };
-        }),
-      ...(opts.recent ?? []),
-    ]);
-    for (const l of listings) {
-      // The same exclusion as the Pro figure, for the same reason.
-      if (l.buybackDisclosed || l.brandedTitleDisclosed) continue;
-      const e = enriched.get(l.vin)!;
-      const b = similarBand(bandAsks, comps, l.vin, l.year, l.mileage, l.priceUsd, hasRealPrice(l), trimKeys.get(l.vin), packIdentity(e), l.drive ?? e.row?.drive);
-      if (b) bands.set(l.id, b);
-    }
-  }
+  const bands = opts?.bands ? computeBands(listings, enriched, trimKeys, comps, opts.recent ?? []) : new Map<string, SimilarBand>();
   const rows: CardRow[] = [];
   for (const l of listings) {
     const e = enriched.get(l.vin)!;
@@ -192,6 +172,48 @@ export async function buildCardIndex(opts?: { bands: true; recent?: RecentAsk[] 
   // one title too.
   for (const r of rows) r.title = carTitle(r.year, r.make, r.model, r.trim);
   return { rows, origin, listings, enriched, trimKeys, bands };
+}
+
+/**
+ * The free asking-vs-similar band for every car, by car id: the used-car
+ * rule (similarBand.ts) for cars with 2,000 miles or more, the new-car rule
+ * (newCarBand.ts) for new cars under 500 miles or with no odometer. The two
+ * never answer for the same car — the used rule refuses anything under 2,000
+ * miles, the new rule anything not sold as new or with 500 or more — and a
+ * car answered by the first is never handed to the second.
+ *
+ * Pure over its inputs so the used labels can be pinned on a fixture
+ * (tests/new-car-band.test.ts): adding the new-car rule changed none of them.
+ */
+export function computeBands(
+  listings: Listing[],
+  enriched: Map<string, EnrichedListing>,
+  trimKeys: Map<string, string>,
+  comps: CompIndex,
+  recent: RecentAsk[]
+): Map<string, SimilarBand> {
+  const bands = new Map<string, SimilarBand>();
+  const clean = listings.filter((l) => !l.buybackDisclosed && !l.brandedTitleDisclosed);
+  const sameness = (l: Listing) => {
+    const e = enriched.get(l.vin)!;
+    return { trimKey: trimKeys.get(l.vin), identity: packIdentity(e), drive: l.drive ?? e.row?.drive };
+  };
+  // The band's own pool index: the same live peers, plus each car's stated
+  // drive and the recent cars. A separate index so askVsMarket is never
+  // handed a car that is no longer listed.
+  const bandAsks = buildAskIndex([...clean.map((l) => ({ ...l, ...sameness(l) })), ...recent]);
+  // New cars: live only. Their pools are large without recent cars, and a
+  // delisted car's sticker and price rung are not kept anywhere.
+  const newCar = (l: Listing): NewCarInput => ({ ...l, realPrice: hasRealPrice(l), ...sameness(l) });
+  const newIdx = buildNewCarIndex(clean.map(newCar));
+  for (const l of clean) {
+    const s = sameness(l);
+    const b =
+      similarBand(bandAsks, comps, l.vin, l.year, l.mileage, l.priceUsd, hasRealPrice(l), s.trimKey, s.identity, s.drive) ??
+      newCarBand(newIdx, newCar(l));
+    if (b) bands.set(l.id, b);
+  }
+  return bands;
 }
 
 // specTrim normalizes each listing in isolation, which can't settle casing that

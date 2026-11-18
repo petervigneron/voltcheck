@@ -67,9 +67,12 @@ export function carBatteryWarranty(
  * cars no longer listed for up to 30 days, the band is the pool's own spread
  * rather than a dollar floor, and a car whose comparison could be made and
  * whose price the band cannot tell apart from typical is "typical". No band
- * means only that the car could not be compared — a new car, no real price
- * or odometer, a buyback or branded title, too few cars of its version, or
- * a pool that mixes versions.
+ * means only that the car could not be compared — no real price or
+ * odometer, a buyback or branded title, too few cars of its version, or a
+ * pool that mixes versions. A new car is compared on its discount from its
+ * own sticker (lib/listings/newCarBand.ts), only where its listing carries
+ * the sticker and a price before manufacturer incentives — no lane fills
+ * those yet — and is never "below".
  *
  * Nothing that recovers a figure leaves here: no dollars, no percentage, no
  * peer count.

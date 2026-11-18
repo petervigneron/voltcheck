@@ -92,6 +92,15 @@ export interface Listing {
    * the evidence bars. Shaped and gated by lib/listings/vinHistory.ts.
    */
   vinHistory?: import("./vinHistory").VinHistory;
+  /**
+   * The car's own sticker (MSRP), as its lane read it, and whether priceUsd
+   * was read from a rung before any manufacturer incentive. Both feed only
+   * the new-car half of the free asking-vs-similar band
+   * (lib/listings/newCarBand.ts), which compares nothing without both. No
+   * lane fills them yet (2026-11-18): the lanes read an MSRP and drop it.
+   */
+  msrpUsd?: number;
+  priceBeforeIncentives?: boolean;
   prevPriceUsd?: number; // the asking price before the current one
   priceChangedAt?: string; // when the current price took effect
   /**

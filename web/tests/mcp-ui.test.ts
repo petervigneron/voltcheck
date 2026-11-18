@@ -46,7 +46,14 @@ stubFeed();
 // where search_listings' and get_listing's shared asking_vs_similar sentence
 // states the new rule (+532 bytes each). The fixture index carries no band,
 // so still no record here carries asking_vs_similar.
-const WIRE_SHA256 = "e2c3982836613f65e492141f9069ac13657a8ba92d22cd9aa46b0fb5e2869a0e";
+// Re-taken 2026-11-18 a third time for the new-car rule (lib/listings/
+// newCarBand.ts). Two messages change and nothing else: initialize's
+// instructions (1,320 → 1,384 bytes: new cars are absent where the listing
+// does not state the manufacturer's suggested price) and tools/list, where
+// the shared asking_vs_similar paragraph splits into a used-car rule and a
+// new-car rule (search_listings 1,812 → 2,576 bytes, get_listing 1,447 →
+// 2,211). Headers are byte-identical; the fixture index still carries no band.
+const WIRE_SHA256 = "43dcb0702d5edb6454ca358861a1d0bc5a47d31e179357f875030f8cbf7d9b3c";
 
 async function transcript(post: (r: Request) => Promise<Response>, url: string): Promise<string[]> {
   const out: string[] = [];
