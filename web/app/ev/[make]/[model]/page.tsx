@@ -234,6 +234,33 @@ export default async function ModelHubPage(props: PageProps<"/ev/[make]/[model]"
         </section>
       )}
 
+      {/* The way to /ev/<make>/<model>/near/<zip> (the cars nearest a ZIP,
+          server-rendered). A GET form can only write a query string, so it
+          lands on near/route.ts, which redirects to the ZIP's own path.
+          Static HTML: the page stays force-static. */}
+      {total > 0 && (
+        <form method="get" action={`${hubPath(hub)}/near`} className="mt-8 flex items-end">
+          <label className="flex flex-col text-[11px] font-bold uppercase tracking-[0.06em] text-ink/50">
+            Near a ZIP
+            <input
+              name="zip"
+              required
+              inputMode="numeric"
+              pattern="[0-9]{5}"
+              maxLength={5}
+              autoComplete="postal-code"
+              className="mt-1 w-32 border-[3px] border-r-0 border-ink bg-paper px-3 py-2 text-[15px] font-bold tracking-normal text-ink normal-case focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt"
+            />
+          </label>
+          <button
+            type="submit"
+            className="border-[3px] border-ink bg-ink px-4 py-2 text-[13px] leading-[22.5px] font-extrabold tracking-[0.06em] text-paper uppercase hover:bg-cobalt focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt"
+          >
+            Search
+          </button>
+        </form>
+      )}
+
       {cars.length > 0 && (
         <ul className="mt-8 divide-y divide-ink/10 border-t border-b border-ink/10">
           {cars.map((c) => (

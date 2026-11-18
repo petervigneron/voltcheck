@@ -2,6 +2,7 @@ import { BASE } from "@/lib/sitemap";
 import { SHARDS } from "@/lib/listings/pack";
 import { FIRST_PAGE_SIZE } from "@/lib/listings/firstPaint";
 import { MODEL_HUBS } from "@/lib/listings/modelHubs";
+import { NEAR_DEFAULT_RADIUS, NEAR_MAX_RADIUS } from "@/lib/listings/near";
 
 // /llms.txt — the llmstxt.org file: what this site is and which of its URLs an
 // agent shopping on someone's behalf should read.
@@ -34,6 +35,7 @@ const BODY = `# Census
 - [Browse](${BASE}/): the whole grid, filtered in the browser by make, model, year, price, mileage, range and charging. The cars are not in this page's HTML; they arrive from the JSON under Listing data below.
 - [Models](${BASE}/ev): one page per nameplate, electric and plug-in hybrid, new and used. ${MODEL_HUBS.length} of them, and the route from the site's own pages to the listings.
 - [Model page](${BASE}/ev/hyundai/ioniq-5): one nameplate's cars, each linking to its own listing page. The path is /ev/{make}/{model}.
+- [Model near a ZIP](${BASE}/ev/kia/ev6/near/60614?condition=used&max_price=28000): one nameplate's cars nearest a ZIP code, in the page's HTML, nearest first, up to 50, each linking to its listing page, with the number found, cars per model year, and the lowest, median and highest asking price. The path is /ev/{make}/{model}/near/{5-digit ZIP}, where /ev/{make}/{model} is a model page. Optional parameters: condition (new, used or certified; used includes certified), max_price (dollars), max_miles (odometer miles), year_min, radius (miles from the ZIP, default ${NEAR_DEFAULT_RADIUS}, at most ${NEAR_MAX_RADIUS}).
 - [Listing page](${BASE}/listing/1g1fz6ev2vf106485): one car, for as long as it is for sale. The path is /listing/{VIN in lower case}. Carries schema.org Car JSON-LD — VIN, name, brand, model, year, odometer, condition, fuel type, color, drivetrain, the offer and its seller — plus the battery, range, charge port and heat pump the page itself shows.
 - [EV fact sheets](${BASE}/facts): one page per question, sourced to the manufacturer's own documents wherever one exists. Each carries FAQPage JSON-LD.
 - [Battery warranty checker](${BASE}/warranty): the manufacturer's high-voltage battery warranty term for a make, model and model year, and whether it is still in force at a given odometer reading. Links to the battery-warranty fact sheet for each model that has one.

@@ -20,10 +20,14 @@ export type VisitProps = { p: string; land?: true; ref?: string; src?: string; n
 const MAX_PATH = 80;
 const LABEL = /^[a-z0-9][a-z0-9._-]{0,39}$/;
 
-/** "/listing/<vin>" → "/listing" plus the VIN; every other path as it is. */
+/** "/listing/<vin>" → "/listing" plus the VIN; "/ev/<make>/<model>/near/<zip>"
+ *  → "/ev/<make>/<model>/near", because a ZIP is where a visitor is looking
+ *  and nothing the record needs; every other path as it is. */
 export function visitPath(pathname: string): { p: string; listing?: string } {
   const m = /^\/listing\/([a-z0-9]{1,32})\/?$/i.exec(pathname);
   if (m) return { p: "/listing", listing: m[1].toLowerCase() };
+  const near = /^(\/ev\/[^/]+\/[^/]+\/near)(?:\/[^/]*)?\/?$/i.exec(pathname);
+  if (near) return { p: near[1].toLowerCase().slice(0, MAX_PATH) };
   const p = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
   return { p: p.slice(0, MAX_PATH) || "/" };
 }

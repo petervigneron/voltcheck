@@ -190,7 +190,7 @@ export function listingJsonLd(e: EnrichedListing): Record<string, unknown> {
  *  Names and prices only — everything a shopper can see on the hub itself.
  *  The hub lists a page of its cars and says so; `numberOfItems` is what this
  *  list holds, not the hub's total, so the markup can't overstate it. */
-export function hubItemListJsonLd(name: string, path: string, cars: HubCar[]): Record<string, unknown> {
+export function hubItemListJsonLd(name: string, path: string, cars: Pick<HubCar, "id" | "title">[]): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",

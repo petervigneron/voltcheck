@@ -10,6 +10,18 @@ test("a listing's VIN leaves the path and rides as the listing ref", () => {
   assert.equal(visitPath("/" + "x".repeat(200)).p.length, 80);
 });
 
+test("a near-a-ZIP page is recorded without its ZIP", () => {
+  assert.deepEqual(visitPath("/ev/kia/ev6/near/60614"), { p: "/ev/kia/ev6/near" });
+  assert.deepEqual(visitPath("/ev/kia/ev6/near/60614/"), { p: "/ev/kia/ev6/near" });
+  assert.deepEqual(visitPath("/ev/Kia/EV6/near"), { p: "/ev/kia/ev6/near" });
+  assert.deepEqual(visitPath("/ev/kia/ev6/near/not-a-zip"), { p: "/ev/kia/ev6/near" });
+  // the model page and its specs are untouched
+  assert.deepEqual(visitPath("/ev/kia/ev6"), { p: "/ev/kia/ev6" });
+  assert.deepEqual(visitPath("/ev/kia/ev6/specs"), { p: "/ev/kia/ev6/specs" });
+  // and the query string never reaches the path
+  assert.deepEqual(visitProps({ pathname: "/ev/kia/ev6/near/60614", search: "?max_price=28000", referrer: "", ownHost: "censusev.com", landing: false, newClient: false }).props, { p: "/ev/kia/ev6/near" });
+});
+
 test("the referrer is a hostname, never a URL, and never ourselves", () => {
   assert.equal(visitRef("https://www.google.com/search?q=private+words", "censusev.com"), "google.com");
   assert.equal(visitRef("https://news.ycombinator.com/item?id=1", "censusev.com"), "news.ycombinator.com");

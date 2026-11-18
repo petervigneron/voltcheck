@@ -11,7 +11,10 @@ import { BASE, sitemapUrls } from "@/lib/sitemap";
 // content of its own to index. /img/<vin> is a dealer's photo passed through
 // for the connector's in-chat cards (lib/img.ts): someone else's picture,
 // nothing to index, and every crawl of it is egress. /pro itself IS crawlable: it is where the free-forever
-// promise is published. /api is left crawlable on purpose: Googlebot fetches
+// promise is published. /ev/<make>/<model>/near/<zip> is allowed on purpose:
+// it exists to be fetched by assistants, and a disallowed URL is one a
+// well-behaved one will not read; the page keeps itself out of the index with
+// its own noindex. /api is left crawlable on purpose: Googlebot fetches
 // /api/index/* when it renders the client browse grid.
 //
 // The listing sitemap is sharded (50k-URL cap), so this lists the index plus
