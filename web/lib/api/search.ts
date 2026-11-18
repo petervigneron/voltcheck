@@ -157,7 +157,7 @@ const MAKE_LABELS: Record<string, string> = {
   brightdrop: "BrightDrop",
   vinfast: "VinFast",
 };
-const makeLabel = (x: { make: string; slug: string }) => MAKE_LABELS[x.slug] ?? x.make;
+export const makeLabel = (x: { make: string; slug: string }) => MAKE_LABELS[x.slug] ?? x.make;
 
 /** What to tell a caller whose search matched nothing because of a name. */
 function emptyNotes(m: ApiManifest, make?: string, model?: string): string[] {

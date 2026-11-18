@@ -1,6 +1,7 @@
 import { FACT_SHEETS } from "@/lib/facts/registry";
 import { SPEC_HUBS, specPath } from "@/lib/facts/specs";
 import { BASE, type SitemapEntry, renderUrlset } from "@/lib/sitemap";
+import { SHOP_PATH, SHOP_QUESTIONS, shopPath } from "@/lib/listings/shopQuestions";
 
 // The fact sheets and spec pages in a sitemap of their own, listed first in
 // robots.txt and the index (lib/sitemap.ts FACTS_SITEMAP_URL has the reason).
@@ -29,6 +30,14 @@ export function GET() {
       url: `${BASE}${specPath(h)}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    // The /shop questions: a fixed set, written to be found like the sheets.
+    // No lastmod — this file reads no data, and the answers move daily.
+    { url: `${BASE}${SHOP_PATH}`, changeFrequency: "daily", priority: 0.7 },
+    ...SHOP_QUESTIONS.map((q) => ({
+      url: `${BASE}${shopPath(q)}`,
+      changeFrequency: "daily" as const,
+      priority: 0.7,
     })),
   ];
   return new Response(renderUrlset(entries, "sitemap/facts.xml"), {

@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Browse } from "@/components/Browse";
 import { FACT_SHEETS } from "@/lib/facts/registry";
+import { SHOP_QUESTIONS, shopHeading, shopPath } from "@/lib/listings/shopQuestions";
 
 // Self-canonical to the apex home URL. Google was reaching the site through
 // http:// and www. variants (each 308s to https://censusev.com/), and with
@@ -78,6 +79,35 @@ export default function BrowsePage() {
                 className="text-ink/80 underline decoration-ink/20 underline-offset-2 hover:text-cobalt hover:decoration-cobalt"
               >
                 {s.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      {/* The /shop questions, beside the warranty sheets and for their
+          reason: this block and the footer are the only links in the home
+          page's server HTML. The registry is compiled in, so the page still
+          reads no data. */}
+      <nav
+        aria-labelledby="shop-questions"
+        className="mx-auto max-w-[1400px] px-5 pt-8 pb-2 sm:px-6"
+      >
+        <h2
+          id="shop-questions"
+          className="text-[11px] font-bold tracking-[0.08em] text-ink uppercase"
+        >
+          <Link href="/shop" className="hover:text-cobalt">
+            By budget
+          </Link>
+        </h2>
+        <ul className="mt-3 columns-1 gap-x-6 text-[13px] leading-7 sm:columns-2 lg:columns-3">
+          {SHOP_QUESTIONS.map((q) => (
+            <li key={q.slug}>
+              <Link
+                href={shopPath(q)}
+                className="text-ink/80 underline decoration-ink/20 underline-offset-2 hover:text-cobalt hover:decoration-cobalt"
+              >
+                {shopHeading(q)}
               </Link>
             </li>
           ))}

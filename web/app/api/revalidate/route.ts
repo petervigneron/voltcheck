@@ -90,6 +90,10 @@ export async function POST(req: Request) {
   // publish is the one signal the site gets that a day has turned over.
   revalidatePath("/market");
   revalidatePath("/market/[month]", "page");
+  // The /shop questions answer from the API artifacts this publish just
+  // wrote (app/shop/[slug]/page.tsx), so this is when their answers move.
+  // /shop itself is the registry only and has nothing to turn over.
+  revalidatePath("/shop/[slug]", "page");
   // The listing pages too (2026-09-12). Each caches for a day
   // (app/listing/[id]/page.tsx), so a car the database stopped serving at
   // 04:00 — delisted by the recheck, or withheld by 0089 because nothing

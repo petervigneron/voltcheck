@@ -60,6 +60,13 @@ export default async function ModelIndexPage() {
       <p className="mt-3 text-sm leading-relaxed text-ink/70">
         One page per nameplate, electric and plug-in hybrid, new and used.
       </p>
+      {/* The /shop questions (lib/listings/shop.ts): the other way into the
+          same cars, by price rather than by name. */}
+      <p className="mt-3 text-sm">
+        <Link href="/shop" className="text-cobalt hover:underline">
+          Electric cars by budget
+        </Link>
+      </p>
 
       {makes.map(({ make, hubs }) => (
         <section key={make} className="mt-10">

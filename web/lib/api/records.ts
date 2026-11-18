@@ -210,17 +210,28 @@ export function withPriceHistory(rec: ApiListing, l: Listing): ApiListingDetail 
 //    (null when unknown), kind (0 BEV / 1 PHEV / -1), range mi (0 = none),
 //    kwh (0 = none), heat pump (1 yes / 0 no / -1), port ("" = none),
 //    drive ("" = none), body ("" = none), first-seen day number (0 = unknown),
-//    asking vs similar cars (0 none / 1 below / 2 typical / 3 above)]
+//    asking vs similar cars (0 none / 1 below / 2 typical / 3 above),
+//    estimated bits (1 range / 2 battery / 4 charge port)]
 //
 // The last element (2026-11-18) is the connector's asking_vs_similar
 // (lib/listings/similarBand.ts), here so a search answers it from the index
 // it already read, with no database and no Pro artifact. Coarse by design:
 // the band only — never the gap, the peer count or the peer median. Optional
 // so an index published before it, or a test fixture, reads as "none".
+//
+// The estimated bits (2026-11-18) say which of the row's range, battery and
+// port figures are not the manufacturer's own — the `estimated` the record
+// carries. Without them a page answering from the index alone (the /shop
+// question pages, lib/listings/shop.ts) cannot mark "(est)" or hold a filter
+// to EPA range, and would have to read the make partitions to find out:
+// most of ~185 MB for a question as broad as "used EVs under $40,000". On
+// the 2026-11-18 feed 12,683 ranges and 19,604 packs were estimated. Absent
+// on an index published before it, which reads as "not known" — never as
+// "not estimated" (slimEstimated).
 export type SlimRow = [
   string, string, string, number, number, number, number, string,
   number | null, number | null, number, number, number, number, string, string, string, number,
-  number?,
+  number?, number?,
 ];
 export const SLIM_CONDITIONS = ["new", "used", "certified"] as const;
 export const SLIM_BANDS = ["below", "typical", "above"] as const;
@@ -229,6 +240,16 @@ export const SLIM_BANDS = ["below", "typical", "above"] as const;
 export function slimBand(row: SlimRow): SimilarBand | undefined {
   const c = row[18];
   return typeof c === "number" && c >= 1 && c <= 3 ? SLIM_BANDS[c - 1] : undefined;
+}
+
+export const SLIM_EST_RANGE = 1;
+export const SLIM_EST_BATTERY = 2;
+export const SLIM_EST_PORT = 4;
+
+/** The row's estimated bits, or undefined when the index predates them. */
+export function slimEstimated(row: SlimRow): number | undefined {
+  const c = row[19];
+  return typeof c === "number" && c >= 0 ? c : undefined;
 }
 
 export interface ApiIndex {
@@ -272,6 +293,9 @@ export function slimRow(rec: ApiListing, e: EnrichedListing, band?: SimilarBand)
     dayNumber(e.listing.firstSeenAt),
     // Only on a car with a real asking price: the band was taken at it.
     band && rec.price_usd != null ? SLIM_BANDS.indexOf(band) + 1 : 0,
+    (rec.range?.estimated ? SLIM_EST_RANGE : 0) |
+      (rec.battery?.estimated ? SLIM_EST_BATTERY : 0) |
+      (rec.charge_port?.estimated ? SLIM_EST_PORT : 0),
   ];
 }
 

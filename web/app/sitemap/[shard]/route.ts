@@ -7,6 +7,7 @@ import { hubIndexAsOf } from "@/lib/listings/hubSource";
 import { fetchMarket } from "@/lib/market";
 import { monthReports } from "@/lib/marketMonths";
 import { BASE, SITEMAP_SHARDS, type SitemapEntry, renderUrlset, sitemapShardOf } from "@/lib/sitemap";
+import { SHOP_PATH, SHOP_QUESTIONS, shopPath } from "@/lib/listings/shopQuestions";
 
 // The listing sitemap, one shard per file at /sitemap/0.xml … /sitemap/11.xml
 // (lib/sitemap.ts SITEMAP_SHARDS).
@@ -97,6 +98,13 @@ function staticRoutes(hubsAsOf: Date | undefined): SitemapEntry[] {
       url: `${BASE}${specPath(h)}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    // The /shop questions (lib/listings/shop.ts), also in sitemap/facts.xml.
+    { url: `${BASE}${SHOP_PATH}`, changeFrequency: "daily", priority: 0.7 },
+    ...SHOP_QUESTIONS.map((q) => ({
+      url: `${BASE}${shopPath(q)}`,
+      changeFrequency: "daily" as const,
+      priority: 0.7,
     })),
   ];
 }

@@ -191,7 +191,9 @@ test("the published index carries the band as one code, and nothing else of it",
   const e = { listing: { firstSeenAt: undefined } } as unknown as EnrichedListing;
   for (const b of SLIM_BANDS) {
     const row = slimRow(rec, e, b);
-    assert.equal(row.length, 19);
+    // row[18] is the band; row[19] is the estimated bits (records.ts), not band data.
+    assert.equal(row.length, 20);
+    assert.equal(row[19], 0);
     assert.equal(slimBand(row), b);
     assert.ok([1, 2, 3].includes(row[18] as number));
   }
