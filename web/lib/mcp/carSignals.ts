@@ -1,8 +1,9 @@
 import type { EnrichmentRow } from "@/lib/types";
 import type { Listing } from "@/lib/listings/types";
-import type { ProSignals } from "@/lib/listings/proSignals";
+import { slimBand, type ApiIndex, type ApiManifest } from "@/lib/api/records";
+import { apiIndex, apiManifest } from "@/lib/api/artifacts";
+import type { SimilarBand } from "@/lib/listings/similarBand";
 import { batteryWarranty as carWarranty, warrantyUnknowableForTitle } from "@/lib/listings/warranty";
-import { paidSignalSet } from "@/lib/api/paid";
 import { bounded } from "./insights";
 
 // Two per-car answers the connector adds to a listing record, each the
@@ -55,81 +56,67 @@ export function carBatteryWarranty(
 // ------------------------------------------------------------ asking vs similar
 
 /**
- * A coarse, free answer to "is this a fair asking price", from the Pro
- * figure and nothing else (owner, 2026-11-18: assistants get the coarse
- * answer free; the exact figures stay Pro).
+ * A coarse, free answer to "is this a fair asking price": below, typical of,
+ * or above what similar cars ask (owner, 2026-11-18: assistants get the
+ * coarse answer free; the exact figures stay Pro).
  *
- * The figure is askVsMarket (lib/listings/comps.ts): this car's asking price
- * minus the mileage-adjusted median asking price of the same variant listed
- * now, in dollars, with every guardrail comps.ts and the publisher apply — at
- * least four comparable cars, no pool that mixes trims or pack identities, no
- * buyback or branded title, a difference of at least $2,000, and nothing more
- * than 30% under. Where any of those withheld it there is no signal, and the
- * bucket is absent too: the bucket never reaches past the figure it is cut
- * from.
+ * The band is computed at publish time by lib/listings/similarBand.ts and
+ * rides in the public API index (lib/api/records.ts SlimRow, last element),
+ * so this reads no database and no Pro artifact. It is its own measure, not
+ * a cut of the Pro askVsMarket figure: the pool takes cars listed now and
+ * cars no longer listed for up to 30 days, the band is the pool's own spread
+ * rather than a dollar floor, and a car whose comparison could be made and
+ * whose price the band cannot tell apart from typical is "typical". No band
+ * means only that the car could not be compared — a new car, no real price
+ * or odometer, a buyback or branded title, too few cars of its version, or
+ * a pool that mixes versions.
  *
- * Cut as a fraction of the similar cars' median (ask − delta), because a
- * $3,000 gap is noise on a $70,000 truck and a lot on a $15,000 Leaf.
- *
- * The thresholds, measured 2026-11-18 on the live feed (170,293 cars, the
- * figure rebuilt from the public shards without the pack-identity guard, so
- * a slight superset: 18,281 cars carry one):
- *
- *   - Within a variant's own listings, a car's mileage-adjusted ask sits a
- *     median 4.4% from its cohort's median; 62% of cars sit within 5.9%,
- *     75% within 8.2%. That spread is what similar cars ordinarily ask.
- *   - The site's measured valuation error floor is ~6% of price (2026-08-22
- *     holdouts): no price model here resolves a car more finely than that.
- *
- * So "above" starts at +6%: past the ordinary spread for most cohorts and
- * at the floor. "below" needs −10%: well past the floor and past three
- * quarters of the ordinary spread, because a false bargain costs a shopper
- * money and a false "above" costs a dealer a look (the asymmetry of CLAUDE.md
- * and of comps.ts's own guards). On that feed: below 3,719 (20%), above
- * 8,153 (45%), typical the remaining 35%.
- *
- * Nothing that recovers the figure leaves here: no dollars, no percentage,
- * no peer count. The asking price and the bucket bound it to a band at best.
+ * Nothing that recovers a figure leaves here: no dollars, no percentage, no
+ * peer count.
  */
-export const BELOW_AT = -0.1;
-export const ABOVE_AT = 0.06;
+export type AskingVsSimilar = SimilarBand;
 
-export type AskingVsSimilar = "below" | "typical" | "above";
+/** The bands of one publish, by car id, with the price each was taken at. */
+export type BandSet = { asOf: string; byId: Map<string, { band: AskingVsSimilar; priceUsd: number }> };
 
-/** The bucket for a guarded delta at the asking price it was computed on.
- *  Undefined when there is no figure or the inputs cannot be a market. */
-export function askingVsSimilar(askUsd: number | null | undefined, deltaUsd: number | undefined): AskingVsSimilar | undefined {
-  if (deltaUsd === undefined || !Number.isFinite(deltaUsd) || askUsd == null || !Number.isFinite(askUsd) || askUsd <= 0) return undefined;
-  const similar = askUsd - deltaUsd;
-  if (!(similar > 0)) return undefined;
-  const f = deltaUsd / similar;
-  if (f <= BELOW_AT) return "below";
-  if (f >= ABOVE_AT) return "above";
-  return "typical";
+/** How long a connector call waits for the index. Past it the field is
+ *  absent for that call, never a guess. */
+export const BANDS_WAIT_MS = 5_000;
+
+let memo: BandSet | undefined;
+
+/** The band set of an index: only cars that carry one. */
+export function bandSet(idx: ApiIndex): BandSet {
+  const byId = new Map<string, { band: AskingVsSimilar; priceUsd: number }>();
+  for (const row of idx.r) {
+    const band = slimBand(row);
+    if (band && row[4] > 0) byId.set(row[0], { band, priceUsd: row[4] });
+  }
+  return { asOf: idx.as_of, byId };
 }
 
-/** The Pro artifact, from the publish it came from. */
-export type SignalSet = { asOf: string; signals: ProSignals };
+async function loadBands(): Promise<BandSet | null> {
+  const m: ApiManifest | null = await apiManifest();
+  if (!m) return null;
+  if (memo?.asOf === m.as_of) return memo;
+  const idx = await apiIndex(m);
+  if (!idx) return null;
+  return (memo = bandSet(idx));
+}
 
-/** How long a connector call waits for the sealed artifact (~3.6 MB, opened
- *  once per publish per instance). Past it the field is absent for that call,
- *  never a guess. */
-export const SIGNALS_WAIT_MS = 5_000;
-
-/** The Pro signals, or null when unreadable in time. `load` is the paid
- *  tier's own reader (lib/api/paid.ts), the one /api/v1/data uses: nothing
- *  of it is exposed, and no database is read. */
-export async function similarSignals(
-  load: () => Promise<SignalSet | null> = paidSignalSet,
-  ms: number = SIGNALS_WAIT_MS,
-): Promise<SignalSet | null> {
+/** The published bands, or null when unreadable in time. */
+export async function similarBands(
+  load: () => Promise<BandSet | null> = loadBands,
+  ms: number = BANDS_WAIT_MS,
+): Promise<BandSet | null> {
   return bounded(() => load(), ms);
 }
 
-/** The bucket for one car, from a signal set of the SAME publish as the
- *  price it is paired with. A set from another publish answers nothing: its
- *  delta was taken at a price this record may no longer carry. */
-export function bucketFor(set: SignalSet | null, asOf: string, id: string, askUsd: number | null | undefined): AskingVsSimilar | undefined {
-  if (!set || set.asOf !== asOf) return undefined;
-  return askingVsSimilar(askUsd, set.signals.get(id)?.askVsMarket?.deltaUsd);
+/** The band for one car, from a band set of the SAME publish as the record,
+ *  at the SAME price it was taken at. A set from another publish, or a price
+ *  that has moved since, answers nothing. */
+export function bucketFor(set: BandSet | null, asOf: string, id: string, askUsd: number | null | undefined): AskingVsSimilar | undefined {
+  if (!set || set.asOf !== asOf || askUsd == null) return undefined;
+  const hit = set.byId.get(id);
+  return hit && hit.priceUsd === askUsd ? hit.band : undefined;
 }

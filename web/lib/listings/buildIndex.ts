@@ -11,6 +11,8 @@ import { trimClaim } from "./trimClaim";
 import { zipCoords } from "@/lib/zips";
 import { carTitle, type CardRow } from "./card";
 import { cardIncentive, matchIncentives } from "@/lib/incentives/match";
+import { similarBand, type SimilarBand } from "./similarBand";
+import type { RecentAsk } from "./recentAsks";
 
 // Everything the browse grid needs, computed once per revalidation instead of
 // once per request: enrichment, tiles, body type, zip centroid, price-cut
@@ -23,12 +25,19 @@ import { cardIncentive, matchIncentives } from "@/lib/incentives/match";
 // `trimKeys` rides out too (2026-09-09): the publisher writes each car's
 // trim key and pack identity to vin_trend_key (0077) so the market trend can
 // be read at the level the cards price on.
-export async function buildCardIndex(): Promise<{
+//
+// `bands` (2026-11-18) is the free asking-vs-similar band per car id
+// (lib/listings/similarBand.ts), computed only when the caller asks for it —
+// the feed publisher, which writes it into the API index. `recent` are the
+// cars no longer listed that may join the pools (lib/listings/recentAsks.ts);
+// without them the pools are live cars only.
+export async function buildCardIndex(opts?: { bands: true; recent?: RecentAsk[] }): Promise<{
   rows: CardRow[];
   origin: FeedOrigin;
   listings: Listing[];
   enriched: Map<string, EnrichedListing>;
   trimKeys: Map<string, string>;
+  bands: Map<string, SimilarBand>;
 }> {
   // A few hundred coefficient rows, fetched once and applied to every
   // listing in memory — the whole transaction-price model costs one request.
@@ -73,6 +82,28 @@ export async function buildCardIndex(): Promise<{
       .filter((l) => !l.buybackDisclosed && !l.brandedTitleDisclosed)
       .map((l) => ({ ...l, trimKey: trimKeys.get(l.vin), identity: packIdentity(enriched.get(l.vin)!) }))
   );
+  // The band's own pool index: the same live peers, plus each car's stated
+  // drive and the recent cars. A separate index so askVsMarket is never
+  // handed a car that is no longer listed.
+  const bands = new Map<string, SimilarBand>();
+  if (opts?.bands) {
+    const bandAsks = buildAskIndex([
+      ...listings
+        .filter((l) => !l.buybackDisclosed && !l.brandedTitleDisclosed)
+        .map((l) => {
+          const e = enriched.get(l.vin)!;
+          return { ...l, trimKey: trimKeys.get(l.vin), identity: packIdentity(e), drive: l.drive ?? e.row?.drive };
+        }),
+      ...(opts.recent ?? []),
+    ]);
+    for (const l of listings) {
+      // The same exclusion as the Pro figure, for the same reason.
+      if (l.buybackDisclosed || l.brandedTitleDisclosed) continue;
+      const e = enriched.get(l.vin)!;
+      const b = similarBand(bandAsks, comps, l.vin, l.year, l.mileage, l.priceUsd, hasRealPrice(l), trimKeys.get(l.vin), packIdentity(e), l.drive ?? e.row?.drive);
+      if (b) bands.set(l.id, b);
+    }
+  }
   const rows: CardRow[] = [];
   for (const l of listings) {
     const e = enriched.get(l.vin)!;
@@ -160,7 +191,7 @@ export async function buildCardIndex(): Promise<{
   // one dealer and "Pro" at the next are one trim on the facet, so they are
   // one title too.
   for (const r of rows) r.title = carTitle(r.year, r.make, r.model, r.trim);
-  return { rows, origin, listings, enriched, trimKeys };
+  return { rows, origin, listings, enriched, trimKeys, bands };
 }
 
 // specTrim normalizes each listing in isolation, which can't settle casing that

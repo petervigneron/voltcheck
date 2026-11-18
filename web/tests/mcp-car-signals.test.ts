@@ -1,25 +1,22 @@
 // The connector's per-car answers (lib/mcp/carSignals.ts) and compare_listings,
 // through the real tools against fixture artifacts and a mocked database
 // (fetch is stubbed; nothing leaves the process): last_seen on compact
-// records, the asking_vs_similar bucket cut from a sealed Pro artifact, the
+// records, the asking_vs_similar band read from the published API index, the
 // listing page's battery-warranty row on get_listing, and compare_listings'
 // reads. Every field's silence is tested beside its answer.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { TOOLS, COMPACT_OMITS, INSTRUCTIONS, COMPARE_MAX } from "../lib/mcp/tools";
-import { askingVsSimilar, bucketFor, carBatteryWarranty, BELOW_AT, ABOVE_AT, similarSignals } from "../lib/mcp/carSignals";
+import { bandSet, bucketFor, carBatteryWarranty, similarBands } from "../lib/mcp/carSignals";
 import { batteryWarranty } from "../lib/listings/warranty";
 import { enrichListing } from "../lib/listings/enrich";
-import { seal } from "../lib/listings/proSeal";
 import type { ApiListing, SlimRow } from "../lib/api/records";
-import type { PackedPro } from "../lib/listings/proSignals";
 import type { Listing } from "../lib/listings/types";
 import type { EnrichmentRow } from "../lib/types";
 
 // ------------------------------------------------------------ fixtures
 
 const AS_OF = new Date().toISOString();
-const KEY = "test-pro-key";
 
 function kia(i: number): ApiListing {
   const vin = `KNDC3DLC8P5${String(100000 + i)}`;
@@ -73,7 +70,13 @@ const LIVE: Record<string, Record<string, unknown>> = {
 };
 const BRANDED = new Set([T4]);
 
-const slim = (id: string, slug: string, mk: string, price: number): SlimRow => [id, slug, mk, 2023, price, 10000, 1, "OR", 45.5, -122.7, 0, 310, 77, -1, "", "", "", 0];
+// The band each car was published with, as the publisher writes it into the
+// index's last element (0 none / 1 below / 2 typical / 3 above):
+//   kia 1 below, kia 2 above, kia 3 typical, kia 4 none (could not compare);
+//   T1 below at $20,000; T2 below at $20,000, but its live price has moved
+//   to $21,000; T3 and T4 none.
+const BANDS: Record<string, number> = { [kiaId(1)]: 1, [kiaId(2)]: 3, [kiaId(3)]: 2, [kiaId(4)]: 0, [T1]: 1, [T2]: 1, [T3]: 0, [T4]: 0 };
+const slim = (id: string, slug: string, mk: string, price: number): SlimRow => [id, slug, mk, 2023, price, 10000, 1, "OR", 45.5, -122.7, 0, 310, 77, -1, "", "", "", 0, BANDS[id]];
 const INDEX = {
   v: 1,
   as_of: AS_OF,
@@ -89,35 +92,10 @@ const MANIFEST = {
   ],
 };
 
-// The Pro deltas, in dollars against each car's published price.
-//   kia 1: 30,100 − (−4,000) → similar 34,100: −11.7%  → below
-//   kia 2: 30,200 − 2,000    → similar 28,200: +7.1%   → above
-//   kia 3: 30,300 − (−2,500) → similar 32,800: −7.6%   → typical (the asymmetry:
-//          a gap this size reads "above" over and "typical" under)
-//   kia 4: no figure          → absent
-//   T1:   20,000 − (−2,500)  → similar 22,500: −11.1%  → below
-//   T2:   same figure, but its live price has moved    → absent
-function packed(asOf: string): PackedPro {
-  return {
-    v: 1,
-    as_of: asOf,
-    pn: [],
-    r: [
-      [kiaId(1), [-4000, 6, 1], 0],
-      [kiaId(2), [2000, 5, 0], 0],
-      [kiaId(3), [-2500, 9, 1], 0],
-      [T1, [-2500, 7, 0], 0],
-      [T2, [-2500, 7, 0], 0],
-    ],
-  };
-}
-let proAsOf = AS_OF;
-let proUp = true;
 
 const dbUrls: string[] = [];
 process.env.SUPABASE_URL = "https://fixture.supabase.example";
 process.env.SUPABASE_ANON_KEY = "test-anon";
-process.env.PRO_FEED_KEY = KEY;
 globalThis.fetch = (async (input: RequestInfo | URL) => {
   const u = String(input);
   const json = (b: unknown) => new Response(JSON.stringify(b), { status: 200 });
@@ -141,8 +119,6 @@ globalThis.fetch = (async (input: RequestInfo | URL) => {
     return json([]);
   }
   const name = /\/feed\/([^/]+)$/.exec(u)?.[1];
-  if (name === "pro-manifest.json") return proUp ? json({ v: 1, as_of: proAsOf, bytes: 1 }) : new Response("", { status: 404 });
-  if (name === "pro-index.bin") return new Response(new Uint8Array(seal(JSON.stringify(packed(proAsOf)), KEY)), { status: 200 });
   const files: Record<string, unknown> = { "api-manifest.json": MANIFEST, "api-index.json": INDEX, "api-make-kia.json": KIAS, "api-make-tesla.json": [] };
   if (name && name in files) return json(files[name]);
   return new Response("not found", { status: 404 });
@@ -166,68 +142,67 @@ test("compact records keep last_seen and still leave out first_seen", async () =
   assert.equal(desc.includes("last_seen"), false, "the detail description no longer lists last_seen as left out");
 });
 
-// ------------------------------------------------------------ price buckets
+// ------------------------------------------------------------ price bands
+// The rule itself is tested in similar-band.test.ts; here, the reading.
 
-test("thresholds: below needs a clearly larger margin than above", () => {
-  assert.equal(BELOW_AT, -0.1);
-  assert.equal(ABOVE_AT, 0.06);
-  assert.ok(-BELOW_AT > ABOVE_AT, "asymmetric toward caution on a bargain");
-  // At the similar cars' median of $30,000:
-  const at = (pct: number) => askingVsSimilar(30000 * (1 + pct), Math.round(30000 * pct));
-  assert.equal(at(-0.1), "below");
-  assert.equal(at(-0.099), "typical");
-  assert.equal(at(-0.08), "typical", "8% under is not called a bargain");
-  assert.equal(at(0.06), "above");
-  assert.equal(at(0.059), "typical");
-  assert.equal(at(0.08), "above", "8% over is called above");
-  assert.equal(at(0), "typical");
+test("bandSet: only cars with a band and a real price; codes outside 1-3 are none", () => {
+  const row = (id: string, price: number, code?: number): SlimRow => {
+    const r: SlimRow = [id, "kia", "ev6", 2023, price, 10000, 1, "OR", null, null, 0, 0, 0, -1, "", "", "", 0];
+    if (code !== undefined) r.push(code);
+    return r;
+  };
+  const set = bandSet({ v: 1, as_of: "a", r: [row("b", 30000, 1), row("t", 30000, 2), row("a", 30000, 3), row("n", 30000, 0), row("old", 30000), row("x", 30000, 7), row("free", 0, 1)] });
+  assert.deepEqual([...set.byId].map(([id, v]) => [id, v.band]), [["b", "below"], ["t", "typical"], ["a", "above"]]);
 });
 
-test("thresholds: no figure, no bucket", () => {
-  assert.equal(askingVsSimilar(30000, undefined), undefined);
-  assert.equal(askingVsSimilar(null, -3000), undefined);
-  assert.equal(askingVsSimilar(0, -3000), undefined);
-  assert.equal(askingVsSimilar(30000, NaN), undefined);
-  assert.equal(askingVsSimilar(30000, 30000), undefined, "a similar-car median of $0 is not a market");
-  const set = { asOf: "a", signals: new Map([["x", { askVsMarket: { deltaUsd: -5000, peerN: 5, trimMatched: true } }]]) };
+test("bucketFor: same publish and same price, or nothing", () => {
+  const set = { asOf: "a", byId: new Map([["x", { band: "below" as const, priceUsd: 30000 }]]) };
   assert.equal(bucketFor(set, "a", "x", 30000), "below");
-  assert.equal(bucketFor(set, "b", "x", 30000), undefined, "a Pro set from another publish answers nothing");
+  assert.equal(bucketFor(set, "b", "x", 30000), undefined, "a band set from another publish answers nothing");
+  assert.equal(bucketFor(set, "a", "x", 30500), undefined, "a band taken at another price answers nothing");
+  assert.equal(bucketFor(set, "a", "x", null), undefined);
   assert.equal(bucketFor(set, "a", "y", 30000), undefined);
   assert.equal(bucketFor(null, "a", "x", 30000), undefined);
 });
 
-test("a slow Pro artifact costs the field, not the call", async () => {
+test("a slow index costs the field, not the call", async () => {
   const t0 = Date.now();
-  const got = await similarSignals(() => new Promise(() => {}), 50);
+  const got = await similarBands(() => new Promise(() => {}), 50);
   assert.equal(got, null);
   assert.ok(Date.now() - t0 < 1000);
 });
 
-test("search records carry asking_vs_similar only where the guarded figure exists, compact and full", async () => {
-  proAsOf = AS_OF;
+test("search records carry asking_vs_similar exactly where the index has a band, compact and full", async () => {
   for (const detail of ["compact", "full"]) {
     const r = (await tool("search_listings").handler({ make: "Kia", limit: 4, detail })) as { results: Rec[] };
     assert.equal(byVin(r.results, 1).asking_vs_similar, "below", detail);
     assert.equal(byVin(r.results, 2).asking_vs_similar, "above", detail);
     assert.equal(byVin(r.results, 3).asking_vs_similar, "typical", detail);
-    assert.equal("asking_vs_similar" in byVin(r.results, 4), false, `${detail}: silence is no field`);
-    // Nothing the Pro figure could be recovered from.
-    const text = JSON.stringify(r);
-    for (const leak of ["-4000", "4000", "2500", "delta", "peer", "ask_vs_similar", "askVsMarket", "trim_matched"]) {
+    assert.equal("asking_vs_similar" in byVin(r.results, 4), false, `${detail}: could not compare is no field`);
+    // Nothing a figure could be recovered from: the records carry the band
+    // and no other new field (the breakdown's own median asking price of
+    // every match is a different, older figure).
+    const text = JSON.stringify(r.results);
+    for (const leak of ["delta", "peer", "median", "spread", "gap", "ask_vs_similar", "askVsMarket", "trim_matched"]) {
       assert.equal(text.includes(leak), false, `${detail}: ${leak}`);
     }
   }
 });
 
-test("a Pro artifact from another publish, or none, gives no bucket anywhere", async () => {
-  proAsOf = new Date(Date.parse(AS_OF) - 3600_000).toISOString();
-  let r = (await tool("search_listings").handler({ make: "Kia", limit: 4 })) as { results: Rec[] };
-  for (const rec of r.results) assert.equal("asking_vs_similar" in rec, false);
-  proAsOf = AS_OF;
-  proUp = false;
-  r = (await tool("search_listings").handler({ make: "Kia", limit: 4 })) as { results: Rec[] };
-  for (const rec of r.results) assert.equal("asking_vs_similar" in rec, false);
-  proUp = true;
+test("the connector reads no Pro artifact for the band", async () => {
+  const seen: string[] = [];
+  const inner = globalThis.fetch;
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    seen.push(String(input));
+    return inner(input, init);
+  }) as typeof fetch;
+  try {
+    await tool("search_listings").handler({ make: "Kia", limit: 4 });
+    await tool("get_listing").handler({ vin: T1 });
+  } finally {
+    globalThis.fetch = inner;
+  }
+  assert.equal(seen.some((u) => u.includes("pro-")), false);
 });
 
 test("the REST search is untouched: no bucket, no warranty", async () => {
@@ -256,9 +231,9 @@ test("get_listing: this car's battery warranty, as its page computes it, and the
 test("get_listing: an expired warranty says so; a moved price gets no bucket", async () => {
   const expired = (await tool("get_listing").handler({ vin: T3 })) as Rec;
   assert.deepEqual(expired.battery_warranty, { status: "Expired", in_force: false, estimated: false });
-  assert.equal("asking_vs_similar" in expired, false, "no Pro figure for this car");
+  assert.equal("asking_vs_similar" in expired, false, "no band for this car");
   const moved = (await tool("get_listing").handler({ vin: T2 })) as Rec;
-  assert.equal("asking_vs_similar" in moved, false, "its Pro figure was taken at another price");
+  assert.equal("asking_vs_similar" in moved, false, "its band was taken at another price");
   assert.equal((moved.battery_warranty as { in_force: boolean }).in_force, true);
 });
 

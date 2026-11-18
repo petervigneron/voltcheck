@@ -39,7 +39,14 @@ stubFeed();
 // and get_listing's descriptions, the detail description without last_seen);
 // and compact search records now carry last_seen. The fixture feed has no
 // Pro artifact, so no record here carries asking_vs_similar.
-const WIRE_SHA256 = "21b543c7bdd87f92b72c3473c87b05d441c6f38557e602cc347008c3be4b3463";
+// Re-taken 2026-11-18 again for the asking_vs_similar band (lib/listings/
+// similarBand.ts). Two messages change and nothing else: initialize's
+// instructions (+68 bytes: "listed now or in the last 30 days", "absent when
+// a car could not be compared, which includes new cars") and tools/list,
+// where search_listings' and get_listing's shared asking_vs_similar sentence
+// states the new rule (+532 bytes each). The fixture index carries no band,
+// so still no record here carries asking_vs_similar.
+const WIRE_SHA256 = "e2c3982836613f65e492141f9069ac13657a8ba92d22cd9aa46b0fb5e2869a0e";
 
 async function transcript(post: (r: Request) => Promise<Response>, url: string): Promise<string[]> {
   const out: string[] = [];

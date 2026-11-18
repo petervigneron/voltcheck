@@ -5,6 +5,7 @@ import { isPlaceholderImage } from "@/lib/listings/placeholderImage";
 import { vehicleKind, type VehicleKind } from "@/lib/listings/kind";
 import { modelKey } from "@/lib/listings/modelName";
 import { zipStateLookup } from "@/lib/zipState";
+import type { SimilarBand } from "@/lib/listings/similarBand";
 
 // The public read API's record — /api/v1/listings, /api/v1/listings/{vin}
 // and the MCP tools all hand back this shape, built by one function so no
@@ -18,7 +19,10 @@ import { zipStateLookup } from "@/lib/zipState";
 // ask-vs-sold (withheld from every surface since 2026-08-20 until a second
 // regional sold dataset validates it) and ask-vs-market (the "deals" filter
 // is a Pro feature; a free API that carries the delta is that filter for
-// free). Incentive eligibility is Pro-gated for the same reason.
+// free). Incentive eligibility is Pro-gated for the same reason. What IS
+// public since 2026-11-18 (owner: assistants get the coarse answer free) is
+// one band per car — below / typical / above similar cars — in the query
+// index below, never on these records and never as a figure.
 
 export const SITE = "https://censusev.com";
 
@@ -205,12 +209,27 @@ export function withPriceHistory(rec: ApiListing, l: Listing): ApiListingDetail 
 //    condition (0 new / 1 used / 2 certified / -1), state, lat, lng
 //    (null when unknown), kind (0 BEV / 1 PHEV / -1), range mi (0 = none),
 //    kwh (0 = none), heat pump (1 yes / 0 no / -1), port ("" = none),
-//    drive ("" = none), body ("" = none), first-seen day number (0 = unknown)]
+//    drive ("" = none), body ("" = none), first-seen day number (0 = unknown),
+//    asking vs similar cars (0 none / 1 below / 2 typical / 3 above)]
+//
+// The last element (2026-11-18) is the connector's asking_vs_similar
+// (lib/listings/similarBand.ts), here so a search answers it from the index
+// it already read, with no database and no Pro artifact. Coarse by design:
+// the band only — never the gap, the peer count or the peer median. Optional
+// so an index published before it, or a test fixture, reads as "none".
 export type SlimRow = [
   string, string, string, number, number, number, number, string,
   number | null, number | null, number, number, number, number, string, string, string, number,
+  number?,
 ];
 export const SLIM_CONDITIONS = ["new", "used", "certified"] as const;
+export const SLIM_BANDS = ["below", "typical", "above"] as const;
+
+/** The band a slim row carries, or undefined for none. */
+export function slimBand(row: SlimRow): SimilarBand | undefined {
+  const c = row[18];
+  return typeof c === "number" && c >= 1 && c <= 3 ? SLIM_BANDS[c - 1] : undefined;
+}
 
 export interface ApiIndex {
   v: 1;
@@ -231,7 +250,7 @@ export const dayNumber = (iso: string | undefined): number => {
   return Number.isFinite(t) ? Math.floor(t / 86400000) : 0;
 };
 
-export function slimRow(rec: ApiListing, e: EnrichedListing): SlimRow {
+export function slimRow(rec: ApiListing, e: EnrichedListing, band?: SimilarBand): SlimRow {
   return [
     rec.id,
     makeSlug(rec.make),
@@ -251,6 +270,8 @@ export function slimRow(rec: ApiListing, e: EnrichedListing): SlimRow {
     rec.drive ?? "",
     rec.body ?? "",
     dayNumber(e.listing.firstSeenAt),
+    // Only on a car with a real asking price: the band was taken at it.
+    band && rec.price_usd != null ? SLIM_BANDS.indexOf(band) + 1 : 0,
   ];
 }
 
@@ -262,7 +283,9 @@ export function buildApiArtifacts(
   rows: CardRow[],
   asOf: string,
   /** ZIP → state (lib/zips.ts loadZipStates); without it no state is filled. */
-  zipStates?: Record<string, string>
+  zipStates?: Record<string, string>,
+  /** Car id → asking-vs-similar band (buildCardIndex's `bands`). */
+  bands?: Map<string, SimilarBand>
 ): { index: ApiIndex; partitions: Map<string, ApiListing[]>; manifest: ApiManifest } {
   const byId = new Map(rows.map((r) => [r.id, r]));
   const partitions = new Map<string, ApiListing[]>();
@@ -284,7 +307,7 @@ export function buildApiArtifacts(
     let part = partitions.get(slug);
     if (!part) partitions.set(slug, (part = []));
     part.push(rec);
-    slim.push(slimRow(rec, e));
+    slim.push(slimRow(rec, e, bands?.get(l.id)));
     let m = makes.get(slug);
     if (!m) makes.set(slug, (m = { make: rec.make, slug, count: 0, models: {} }));
     m.count++;

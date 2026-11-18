@@ -37,6 +37,7 @@ import { loadZipStates } from "../lib/zipState.ts";
 import { packPro, publicRows } from "../lib/listings/proSignals.ts";
 import { packIdentity } from "../lib/listings/enrich.ts";
 import { seal } from "../lib/listings/proSeal.ts";
+import { fetchRecentAsks } from "../lib/listings/recentAsks.ts";
 
 const FORCE = process.argv.includes("--force");
 const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
@@ -47,7 +48,12 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 const SHRINK_TOLERANCE = 0.1;
 
 const t0 = Date.now();
-const { rows: fullRows, origin, listings, enriched, trimKeys } = await buildCardIndex();
+// Cars no longer listed in the last 30 days, at their last ask, join the
+// free asking-vs-similar pools (lib/listings/recentAsks.ts; table 0126).
+// Unreadable or absent: [] and the pools are live cars only.
+const recent = await fetchRecentAsks(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+console.error(`publish-feed: ${recent.length} recently delisted cars join the similar-car pools`);
+const { rows: fullRows, origin, listings, enriched, trimKeys, bands } = await buildCardIndex({ bands: true, recent });
 // Everything the public bucket serves is built from rows WITHOUT the Pro
 // fields (lib/listings/proSignals.ts); the Pro artifact below is the only
 // carrier of them, and it goes up sealed.
@@ -123,7 +129,12 @@ await upload("hubs", JSON.stringify(buildHubIndex(rows)));
 // last: readers gate on the manifest, so a publish that dies halfway leaves
 // the previous coherent set in place.
 const publishedAt = new Date().toISOString();
-const api = buildApiArtifacts(listings, enriched, rows, publishedAt, await loadZipStates());
+const api = buildApiArtifacts(listings, enriched, rows, publishedAt, await loadZipStates(), bands);
+{
+  const n = { below: 0, typical: 0, above: 0 };
+  for (const b of bands.values()) n[b]++;
+  console.error(`publish-feed: asking vs similar — below ${n.below}, typical ${n.typical}, above ${n.above}, none ${listings.length - bands.size}`);
+}
 for (const [slug, recs] of api.partitions) await upload(`api-make-${slug}`, JSON.stringify(recs));
 await upload("api-index", JSON.stringify(api.index));
 await upload("api-manifest", JSON.stringify(api.manifest));

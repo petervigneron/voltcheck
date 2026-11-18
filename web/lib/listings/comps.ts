@@ -232,6 +232,12 @@ export interface AskPeer {
    *  packIdentity), supplied by the caller for the same layering reason as
    *  trimKey. Undefined where enrichment has no exact row for the car. */
   identity?: string;
+  /** A car no longer listed, carried at its last asking price (the free
+   *  similar-cars band only: lib/listings/similarBand.ts). askVsMarket is
+   *  never handed an index that holds one. */
+  recent?: true;
+  /** The drive the car states, for the same band's drive check. */
+  drive?: string;
 }
 
 /**
@@ -307,6 +313,24 @@ export function askCohortVin8(vin8: string): string {
 
 const askKey = (vin8: string, year: number) => key(askCohortVin8(vin8), year);
 
+/** The ask-cohort key buildAskIndex files a car under, for a second reader
+ *  of the same index (lib/listings/similarBand.ts) that must not rebuild it. */
+export const askCohortKey = askKey;
+
+/** The sold-fit cohort whose per-mile slope moves peers to this car's
+ *  mileage, chosen exactly as askVsMarket chooses it: across every real
+ *  vin8 in the (possibly masked) ask cohort, the row with the most sales. */
+export function askCohortSlope(comps: CompIndex, asks: AskIndex, vin: string, year: number): { perMile: number; fromSales: boolean } {
+  const k = askKey(vin.slice(0, 8), year);
+  let c: CompCohort | undefined;
+  for (const v8 of new Set([vin.slice(0, 8), ...(asks.wide.get(k) ?? []).map((p) => p.vin.slice(0, 8))])) {
+    const cand = comps.get(key(v8, year));
+    if (cand && (!c || cand.salesN > c.salesN)) c = cand;
+  }
+  const fromSales = c != null && Number.isFinite(c.usdPerMile) && c.usdPerMile < 0;
+  return { perMile: fromSales ? c!.usdPerMile : FALLBACK_USD_PER_MILE, fromSales };
+}
+
 /** The PostgREST `like` pattern (before the trailing `*`) that fetches every
  *  listing whose vin8 shares this one's ask cohort — `_` is SQL LIKE's
  *  single-character wildcard, which PostgREST passes through. A superset is
@@ -331,6 +355,8 @@ export function buildAskIndex(
     condition?: string;
     trimKey?: string;
     identity?: string;
+    recent?: true;
+    drive?: string;
   }[]
 ): AskIndex {
   const index: AskIndex = { wide: new Map(), narrow: new Map() };
@@ -349,6 +375,8 @@ export function buildAskIndex(
       trimKey: l.trimKey,
       identity: l.identity,
     };
+    if (l.recent) peer.recent = true;
+    if (l.drive) peer.drive = l.drive;
     push(index.wide, k, peer);
     if (l.trimKey) push(index.narrow, `${k}|${l.trimKey}`, peer);
   }

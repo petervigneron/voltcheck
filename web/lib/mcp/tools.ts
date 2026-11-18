@@ -2,12 +2,12 @@ import type { McpTool } from "./server";
 import { searchListings, liveListingByVin, listModels, BREAKDOWN_TRIMS, type SearchResponse } from "@/lib/api/search";
 import { SORTS, MAX_LIMIT } from "@/lib/api/query";
 import { SITE } from "@/lib/api/records";
-import { apiHubIndex, apiIndex, apiManifest } from "@/lib/api/artifacts";
+import { apiHubIndex } from "@/lib/api/artifacts";
 import { hasRealPrice } from "@/lib/listings/price";
 import { fetchMarket } from "@/lib/market";
 import { fetchSpeed } from "@/lib/listings/speed";
 import { batteryWarranty, marketSnapshot, bounded } from "./insights";
-import { bucketFor, carBatteryWarranty, similarSignals, type SignalSet } from "./carSignals";
+import { bucketFor, carBatteryWarranty, similarBands, type BandSet } from "./carSignals";
 
 // The listing tools are the REST endpoints with a schema on the front: same
 // functions, same records, same as_of, so an agent on either door sees the
@@ -15,8 +15,8 @@ import { bucketFor, carBatteryWarranty, similarSignals, type SignalSet } from ".
 // records are labelled (labelled(): our page with ?ref=mcp, the seller link
 // through /go), search records are compact unless asked for in full, and a
 // search carries a breakdown of every match. Records also carry two answers
-// REST does not (lib/mcp/carSignals.ts): the coarse asking_vs_similar bucket
-// cut from the Pro figure, and, on get_listing and compare_listings, the
+// REST does not (lib/mcp/carSignals.ts): the coarse asking_vs_similar band
+// the publisher writes into the API index, and, on get_listing and compare_listings, the
 // listing page's battery-warranty row for the car. battery_warranty and
 // market_snapshot are connector-only and read what /warranty, the model pages
 // and /market already print (lib/mcp/insights.ts).
@@ -141,9 +141,10 @@ export function labelled<T extends { url?: unknown; vin?: unknown; seller?: unkn
 export async function runSearch(args: Record<string, unknown>): Promise<{ result: unknown; search: SearchResponse }> {
   const { detail = "compact", ...query } = args;
   if (detail !== "compact" && detail !== "full") throw new Error('invalid query: detail: expected "compact" or "full"');
-  // Started with the search, not after it: on a warm instance it is memoised
-  // and costs one small manifest read; on a cold one it is bounded.
-  const signals = similarSignals();
+  // Started with the search, not after it: the bands ride in the same API
+  // index the search reads, memoised per publish; on a cold instance the
+  // wait is bounded.
+  const signals = similarBands();
   const r = await searchListings(query, { breakdown: true });
   // The details are the point: "invalid query" alone does not tell an
   // agent which argument to fix, and the REST door has always said.
@@ -164,43 +165,17 @@ export async function runSearch(args: Record<string, unknown>): Promise<{ result
 }
 
 const SIMILAR_DESCRIPTION =
-  'asking_vs_similar ("below", "typical" or "above") compares the asking price with similar cars listed on Census EV now (same version and model year, adjusted for mileage); it compares asking prices and is not an appraisal. "below" means at least 10% under them, "above" at least 6% over. Absent for most cars: when too few similar cars are listed, when the comparison is withheld, or when the difference is too small to call.';
+  'asking_vs_similar ("below", "typical" or "above") compares the asking price with similar cars on Census EV: the same version and model year within 40,000 miles, adjusted for mileage, counting cars listed now and cars no longer listed in the last 30 days at their last asking price. It compares asking prices and is not an appraisal. "below" and "above" need a gap of at least $1,000 that is also wider than the usual spread of asking prices for that version: for most cars about 3 to 7% over for "above" and about 5 to 9% under for "below", more where few similar cars are known, and "below" must still hold with any one similar car left out. Otherwise it is "typical". Absent when the car could not be compared: new or under 2,000 miles, no asking price or mileage, a disclosed buyback or branded title, fewer than 3 similar cars, similar cars that are not all one version, or an asking price so far under them that the gap is more than 30% of it.';
 
 function withSimilar<T extends object>(rec: T, bucket: string | undefined): T {
   return bucket ? { ...rec, asking_vs_similar: bucket } : rec;
 }
 
-/** What the asking_vs_similar bucket of a live listing needs: the Pro set and
- *  the price each car was published at, both from one publish. Read once per
- *  call, however many cars the call reads. */
-interface PriceContext {
-  set: SignalSet | null;
-  asOf?: string;
-  publishedAsk: (id: string) => number | undefined;
-}
-
-async function priceContext(): Promise<PriceContext> {
-  const none: PriceContext = { set: null, publishedAsk: () => undefined };
-  const [set, prices] = await Promise.all([
-    similarSignals(),
-    bounded(async () => {
-      const m = await apiManifest();
-      const idx = m ? await apiIndex(m) : null;
-      if (!m || !idx) return null;
-      const byId = new Map<string, number>();
-      for (const row of idx.r) if (row[4] > 0) byId.set(row[0], row[4]);
-      return { asOf: m.as_of, byId };
-    }, 5_000),
-  ]);
-  if (!set || !prices || set.asOf !== prices.asOf) return none;
-  return { set, asOf: prices.asOf, publishedAsk: (id) => prices.byId.get(id) };
-}
-
 /** get_listing's record: the REST record, labelled, with the listing page's
- *  battery-warranty row for this car and the price bucket where both hold.
- *  The live price must be the price the Pro figure was taken at; a car whose
- *  price has moved since the publish gets no bucket until the next one. */
-async function connectorListing(vin: string, ctx: () => Promise<PriceContext>) {
+ *  battery-warranty row for this car and the price band where both hold.
+ *  The live price must be the price the band was taken at; a car whose
+ *  price has moved since the publish gets no band until the next one. */
+async function connectorListing(vin: string, ctx: () => Promise<BandSet | null>) {
   // A malformed VIN is answered without starting the price context's reads.
   const pc = /^[A-HJ-NPR-Z0-9]{17}$/i.test(vin) ? ctx() : undefined;
   const r = await liveListingByVin(vin);
@@ -209,11 +184,8 @@ async function connectorListing(vin: string, ctx: () => Promise<PriceContext>) {
   let out: typeof record & { battery_warranty?: unknown; asking_vs_similar?: string } = labelled(record);
   const warranty = carBatteryWarranty(enriched.row, listing);
   if (warranty) out = { ...out, battery_warranty: warranty };
-  const p = await pc!;
-  const published = p.publishedAsk(listing.id);
-  if (p.asOf && published !== undefined && hasRealPrice(listing) && listing.priceUsd === published) {
-    out = withSimilar(out, bucketFor(p.set, p.asOf, listing.id, published));
-  }
+  const set = await pc!;
+  if (set && hasRealPrice(listing)) out = withSimilar(out, bucketFor(set, set.asOf, listing.id, listing.priceUsd));
   return out;
 }
 
@@ -235,9 +207,9 @@ async function compareListings(args: Record<string, unknown>) {
   if (vins.length < COMPARE_MIN || vins.length > COMPARE_MAX) {
     throw new Error(`invalid query: vins: expected ${COMPARE_MIN} to ${COMPARE_MAX} different VINs`);
   }
-  // One price context for every car, so the call reads no more than one
+  // One band set for every car, so the call reads no more than one
   // get_listing per VIN does.
-  const ctx = once(priceContext);
+  const ctx = once(() => similarBands());
   const got = await Promise.all(vins.map((v) => bounded(() => connectorListing(v, ctx), COMPARE_WAIT_MS)));
   const listings: unknown[] = [];
   const not_found: string[] = [];
@@ -270,7 +242,7 @@ export const TOOLS: McpTool[] = [
     description: `One listing by VIN: every field of the search record plus its asking-price history on this seller, and battery_warranty, this car's high-voltage battery warranty as its Census EV page gives it: status (for example "Expired" or "In force · 38,200 mi or 3+ yr left"), in_force, and estimated when the term is not the manufacturer's own figure. battery_warranty is absent where the page gives no verdict for the car. ${SIMILAR_DESCRIPTION} The seller link forwards through censusev.com to the dealer's own page for the car.`,
     inputSchema: { type: "object", properties: { vin: { type: "string", description: "17-character VIN." } }, required: ["vin"], additionalProperties: false },
     handler: async (args) => {
-      const r = await connectorListing(String(args.vin ?? ""), once(priceContext));
+      const r = await connectorListing(String(args.vin ?? ""), once(() => similarBands()));
       if ("error" in r) throw new Error(r.error);
       return sourced(r);
     },
@@ -363,4 +335,4 @@ export const TOOLS: McpTool[] = [
 ];
 
 export const INSTRUCTIONS =
-  "Census EV lists electric and plug-in hybrid vehicles for sale in the United States. Call list_models to learn make and model spellings; search_listings to find cars (give a zip for nearby results; its breakdown summarises every match, and detail=full returns every field); get_listing for one car's full record and price history; compare_listings to set two to five cars side by side by VIN; battery_warranty for a model year's battery warranty and whether it is in force at a mileage; market_snapshot for a model's counts, median asking prices by year and price trend. A car's seller.url forwards through censusev.com to the dealer's own page, which is where the car is bought; seller.name and seller.domain say where it leads. last_seen is the day a car was last seen for sale. battery_warranty on a get_listing or compare_listings record is that car's own battery-warranty standing, as its page gives it. asking_vs_similar says whether the asking price is below, typical of or above similar cars listed on Census EV now; it compares asking prices, is not an appraisal, and is absent for most cars. Facts marked estimated are not the manufacturer's own figure, and an absent field is one the site does not know. Results are as of the as_of timestamp.";
+  "Census EV lists electric and plug-in hybrid vehicles for sale in the United States. Call list_models to learn make and model spellings; search_listings to find cars (give a zip for nearby results; its breakdown summarises every match, and detail=full returns every field); get_listing for one car's full record and price history; compare_listings to set two to five cars side by side by VIN; battery_warranty for a model year's battery warranty and whether it is in force at a mileage; market_snapshot for a model's counts, median asking prices by year and price trend. A car's seller.url forwards through censusev.com to the dealer's own page, which is where the car is bought; seller.name and seller.domain say where it leads. last_seen is the day a car was last seen for sale. battery_warranty on a get_listing or compare_listings record is that car's own battery-warranty standing, as its page gives it. asking_vs_similar says whether the asking price is below, typical of or above similar cars on Census EV, listed now or in the last 30 days; it compares asking prices, is not an appraisal, and is absent when a car could not be compared, which includes new cars. Facts marked estimated are not the manufacturer's own figure, and an absent field is one the site does not know. Results are as of the as_of timestamp.";
