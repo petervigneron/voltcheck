@@ -1,15 +1,17 @@
+// The tests that load Next itself (the proxy's matcher and its pass-through)
+// are in ai-agents-proxy.test.tsx. The deploy workflow runs tests/*.test.ts
+// with no node_modules installed, so a .test.ts file that imports `next`
+// fails there with ERR_MODULE_NOT_FOUND and the deploy is refused: that is
+// what happened to b006fc040 on 2026-11-18. The .tsx suffix is this repo's
+// existing convention for tests that need the framework.
 // lib/aiAgents.ts and proxy.ts's second matcher: which assistant fetched
 // which kind of page, and that the proxy is invoked for exactly those.
 // First, as Next's own server does: some next/dist modules otherwise build a
 // fake AsyncLocalStorage that throws after the test has ended.
-import "next/dist/server/node-environment-baseline.js";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { NextRequest } from "next/server";
-import { unstable_doesMiddlewareMatch } from "next/experimental/testing/server";
 import { AI_AGENT_LABELS, AI_AGENT_TOKENS, PAGE_KINDS, aiAgentLabel, onBehalfOfPerson, pageKind } from "../lib/aiAgents";
-import { config, proxy } from "../proxy";
 
 // User-agents as the companies publish them.
 const REAL: [string, string][] = [
@@ -113,107 +115,4 @@ test("a page folds to its family, never to its path", () => {
   ];
   for (const [path, kind] of cases) assert.equal(pageKind(path), kind, path);
   for (const [path] of cases) assert.ok((PAGE_KINDS as readonly string[]).includes(pageKind(path)));
-});
-
-const matches = (url: string, ua?: string, cookies?: Record<string, string>) =>
-  unstable_doesMiddlewareMatch({ config, url, headers: ua ? { "user-agent": ua } : {}, cookies });
-
-test("the proxy runs for every listed assistant on pages, robots, llms and sitemaps", () => {
-  for (const [ua] of REAL) {
-    for (const url of ["/", "/listing/5YJ3E1EA5RF824810", "/ev/kia/ev6/near/60614", "/robots.txt", "/llms.txt", "/sitemap/0.xml", "/api/index/0", "/api/mcp"])
-      assert.ok(matches(url, ua), `${ua} on ${url}`);
-  }
-});
-
-test("every token in the module is one the matcher also sees", () => {
-  // A token the matcher misses would never reach the proxy to be counted.
-  for (const [tok] of AI_AGENT_TOKENS) {
-    const real = tok.startsWith("Meta-") ? tok.toLowerCase() : tok;
-    assert.ok(matches("/", `Mozilla/5.0 (compatible; ${real}/1.0)`), tok);
-  }
-});
-
-test("the proxy never runs for people or ordinary crawlers without a session", () => {
-  for (const ua of NOT_AI) for (const url of ["/", "/listing/x", "/robots.txt", "/sitemap/0.xml", "/api/index/0"]) assert.ok(!matches(url, ua), `${ua} on ${url}`);
-  assert.ok(!matches("/"));
-});
-
-test("assets are never counted, whoever asks", () => {
-  const ua = REAL[0][0];
-  for (const url of [
-    "/_next/static/chunks/main.js",
-    "/_next/image?url=x",
-    "/img/5YJ3E1EA5RF824810",
-    "/favicon.ico",
-    "/icon.svg",
-    "/apple-icon.png",
-    "/opengraph-image",
-    "/listing/5YJ3E1EA5RF824810/opengraph-image",
-    "/fonts/inter.woff2",
-  ])
-    assert.ok(!matches(url, ua), url);
-});
-
-test("the session matcher is unchanged", () => {
-  const chrome = NOT_AI[0];
-  assert.ok(matches("/", chrome, { vc_rt: "x" }));
-  assert.ok(!matches("/sitemap/0.xml", chrome, { vc_rt: "x" }));
-  assert.ok(!matches("/api/index/0", chrome, { vc_rt: "x" }));
-});
-
-test("for an assistant the proxy passes the request through untouched, and counts after", async () => {
-  const waited: Promise<unknown>[] = [];
-  const event = { waitUntil: (p: Promise<unknown>) => waited.push(p) } as never;
-  const saved = { url: process.env.SUPABASE_URL, key: process.env.SUPABASE_ANON_KEY };
-  const calls: { url: string; body: string }[] = [];
-  const realFetch = globalThis.fetch;
-  process.env.SUPABASE_URL = "https://db.example/";
-  process.env.SUPABASE_ANON_KEY = "anon";
-  globalThis.fetch = (async (url: string, init: RequestInit) => {
-    calls.push({ url: String(url), body: String(init.body) });
-    return new Response(null, { status: 204 });
-  }) as typeof fetch;
-  try {
-    // Carrying a session cookie too: the session logic must not run for it.
-    const req = new NextRequest("https://censusev.com/listing/5YJ3E1EA5RF824810?zip=60614", {
-      headers: { "user-agent": REAL[5][0], cookie: "vc_rt=stale; vc_at=bad" },
-    });
-    const res = await proxy(req, event);
-    const headers = [...res.headers.keys()].sort();
-    assert.deepEqual(headers, ["x-middleware-next"]);
-    assert.equal(waited.length, 1);
-    await Promise.all(waited);
-    assert.deepEqual(calls, [
-      { url: "https://db.example/rest/v1/rpc/agent_fetch_bump", body: JSON.stringify({ _agent: "claude-user", _kind: "listing" }) },
-    ]);
-  } finally {
-    globalThis.fetch = realFetch;
-    process.env.SUPABASE_URL = saved.url;
-    process.env.SUPABASE_ANON_KEY = saved.key;
-    if (saved.url === undefined) delete process.env.SUPABASE_URL;
-    if (saved.key === undefined) delete process.env.SUPABASE_ANON_KEY;
-  }
-});
-
-test("a failed count never reaches the response", async () => {
-  const waited: Promise<unknown>[] = [];
-  const event = { waitUntil: (p: Promise<unknown>) => waited.push(p) } as never;
-  const realFetch = globalThis.fetch;
-  const saved = { url: process.env.SUPABASE_URL, key: process.env.SUPABASE_ANON_KEY };
-  process.env.SUPABASE_URL = "https://db.example";
-  process.env.SUPABASE_ANON_KEY = "anon";
-  globalThis.fetch = (async () => {
-    throw new Error("down");
-  }) as typeof fetch;
-  try {
-    const res = await proxy(new NextRequest("https://censusev.com/", { headers: { "user-agent": REAL[0][0] } }), event);
-    assert.equal(res.headers.get("x-middleware-next"), "1");
-    await assert.doesNotReject(Promise.all(waited));
-  } finally {
-    globalThis.fetch = realFetch;
-    process.env.SUPABASE_URL = saved.url;
-    process.env.SUPABASE_ANON_KEY = saved.key;
-    if (saved.url === undefined) delete process.env.SUPABASE_URL;
-    if (saved.key === undefined) delete process.env.SUPABASE_ANON_KEY;
-  }
 });
