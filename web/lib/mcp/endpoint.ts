@@ -1,4 +1,5 @@
 import { CORS, json } from "@/lib/api/http";
+import { countCalledCars } from "@/lib/mcp/carCount";
 import { createMcpServer } from "@/lib/mcp/server";
 import { INSTRUCTIONS, TOOLS } from "@/lib/mcp/tools";
 
@@ -50,7 +51,10 @@ export async function mcpPost(req: Request, cards: boolean): Promise<Response> {
   // If the card module ever fails to load, answer as the plain server: a
   // connector with no cards is still a connector.
   const server = cards ? await cardsMcpServer().catch(() => PLAIN_SERVER) : PLAIN_SERVER;
-  const res = await server.handle(body);
+  // Beside the answer, not before or after it: which cars an assistant asked
+  // about for a person (lib/mcp/carCount.ts). It cannot fail the request and
+  // is bounded at 1.5 s, under what any car lookup takes.
+  const [res] = await Promise.all([server.handle(body), countCalledCars(req.headers.get("user-agent"), body)]);
   if (res.status === 202) return new Response(null, { status: 202, headers: CORS });
   return json(res.body, { status: res.status });
 }
