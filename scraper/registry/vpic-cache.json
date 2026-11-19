@@ -3664,7 +3664,8 @@
 {"Series":"F-Series","Trim":"STX","DriveType":"4WD/4-Wheel Drive/4x4","BatteryKWh":"","ElectrificationLevel":"Strong HEV (Hybrid Electric Vehicle)","FuelTypePrimary":"Gasoline","FuelTypeSecondary":"Electric","Make":"FORD","Model":"F-150"},
 {"Series":"F-Series","Trim":"Platinum","DriveType":"4WD/4-Wheel Drive/4x4","BatteryKWh":"","ElectrificationLevel":"HEV (Hybrid Electric Vehicle) - Level Unknown","FuelTypePrimary":"Gasoline","FuelTypeSecondary":"Electric","Make":"FORD","Model":"F-150"},
 {"Series":"","Trim":"Ultra","DriveType":"AWD/All-Wheel Drive","BatteryKWh":"82","ElectrificationLevel":"BEV (Battery Electric Vehicle)","FuelTypePrimary":"Electric","FuelTypeSecondary":"","Make":"VOLVO","Model":"EX40"},
-{"Series":"","Trim":"Limited (Electric)","DriveType":"","BatteryKWh":"","ElectrificationLevel":"BEV (Battery Electric Vehicle)","FuelTypePrimary":"Electric","FuelTypeSecondary":"","Make":"HYUNDAI","Model":"Ioniq"}
+{"Series":"","Trim":"Limited (Electric)","DriveType":"","BatteryKWh":"","ElectrificationLevel":"BEV (Battery Electric Vehicle)","FuelTypePrimary":"Electric","FuelTypeSecondary":"","Make":"HYUNDAI","Model":"Ioniq"},
+{"Series":"15 Series","Trim":"450e","DriveType":"4WD/4-Wheel Drive/4x4","BatteryKWh":"","ElectrificationLevel":"BEV (Battery Electric Vehicle)","FuelTypePrimary":"Electric","FuelTypeSecondary":"","Make":"LEXUS","Model":"TZ"}
 ],"vins":{
 "1N4BZ1BV3NC564248":[0,20686],
 "1HGCV3F9XKA018395":[1,20686],
@@ -433828,5 +433829,30 @@
 "WB523CF02SCS36087":[658,20776],
 "WBY63HY03VCZ38552":[3485,20776],
 "WBY73HY0XVCZ40853":[2318,20776],
-"1GYTEEKL2TU110784":[2297,20776]
+"1GYTEEKL2TU110784":[2297,20776],
+"WA1E2AFY1R2017100":[2120,20776],
+"JTJHKCFZ0T2108791":[2156,20776],
+"JTJAAAAC6V2000383":[3666,20776],
+"W1N2M3CB6VF027115":[3559,20776],
+"W1N2M3CB7VF028306":[3559,20776],
+"KNDRMDLH3P5187980":[2408,20776],
+"JTM7ERAV1TJ057417":[1936,20776],
+"JTM7ERAV0TD042308":[1936,20776],
+"7YAKN4DA5VY083527":[1978,20776],
+"7YAKN4DA6VY083990":[1978,20776],
+"5XYC34JA4TG017613":[2306,20776],
+"5YJ3E1EA3PF708549":[1550,20776],
+"7SAYGDEF1NF343656":[2050,20776],
+"7SAYGDEE6PF685436":[1367,20776],
+"JTJBDADB1TA013611":[2530,20776],
+"JTJBCACB1TA011071":[1296,20776],
+"3C4RJACK9TT275879":[2980,20776],
+"KMUKEDTB8PU013089":[2086,20776],
+"WB523CF05RCP20748":[658,20776],
+"1GYKPWRL5RZ128631":[2188,20776],
+"3GN7DLRR1SS114002":[3148,20776],
+"1GYKPRRK8TZ300103":[1637,20776],
+"JN1DF0CD3PM710966":[2597,20776],
+"JN1CF0BB6PM705093":[2424,20776],
+"WB523CF09RCP62002":[658,20776]
 }}
