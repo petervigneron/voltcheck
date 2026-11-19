@@ -27,6 +27,7 @@
 import { readFileSync } from "node:fs";
 import { politePostJson, politeGetJson } from "../http.mjs";
 import { oemField } from "../price-provenance.mjs";
+import { stickerDollars, stickerRecord } from "../sticker.mjs";
 import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const HYUNDAI = {
@@ -166,7 +167,7 @@ const httpsUrl = (u) => {
   return s.startsWith("//") ? `https:${s}` : s.startsWith("http") ? s : undefined;
 };
 
-function toRecord(hit, sweep) {
+export function toRecord(hit, sweep) {
   const vin = String(hit.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
   // Per-record echo of the queried facet (aem.fuelType, e.g. ["Plug-in
@@ -199,6 +200,11 @@ function toRecord(hit, sweep) {
     trim: hit.trimDisplayName || hit.trim || undefined,
     priceUsd,
     priceProvenance,
+    // The sticker (lib/sticker.mjs): `msrp` — never `startingMsrp`, the
+    // trim's base price — on the new-stock search. Agreed to the dollar with
+    // the selling dealer's own MSRP on all 54 co-listed VINs (2026-11-18). No
+    // incentive fields on the record, so no basis beyond price = sticker.
+    ...stickerRecord({ msrpUsd: stickerDollars(hit.msrp), priceUsd }),
     driveLine: drive(hit.drivetrainName || hit.drivetrain),
     exteriorColor: hit.exteriorColor ? titleCase(hit.exteriorColor) : undefined,
     interiorColor: hit.interiorColor ? titleCase(hit.interiorColor) : undefined,

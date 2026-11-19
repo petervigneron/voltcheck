@@ -36,6 +36,7 @@
 // dealerId, no dealer name/city, so dealer geo is left blank (a known gap).
 import { politePostJson } from "../http.mjs";
 import { pickTaggedPrice } from "../price-provenance.mjs";
+import { stickerDollars, stickerRecord } from "../sticker.mjs";
 
 export const BMW = {
   key: "bmw",
@@ -105,7 +106,7 @@ function splitName(name) {
   return { model: s.slice(0, sp), trim: s.slice(sp + 1).trim() || undefined };
 }
 
-function toRecord(v, sweep) {
+export function toRecord(v, sweep) {
   const vin = String(v.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
   // Structured guard: the record's own fuelType must echo the queried facet
@@ -128,6 +129,12 @@ function toRecord(v, sweep) {
       ["totalMsrp", num(v.totalMsrp)],
       ["baseMsrp", num(v.baseMsrp)],
     ]),
+    // The sticker is `totalMsrp` (equal to the selling dealer's own MSRP on all
+    // 34 co-listed VINs read, mckennacars.com, 2026-11-18) and NEVER
+    // `baseMsrp`, which sat $5,650-$17,100 under it on the same cars. The
+    // price IS totalMsrp, so ingest's price-equals-sticker rule marks it
+    // before incentives; a car priced off the baseMsrp rung gets no sticker.
+    ...stickerRecord({ msrpUsd: stickerDollars(v.totalMsrp) }),
     driveLine: drive(v.engineDriveType?.name),
     exteriorColor: v.exteriorGenericColor || undefined,
     interiorColor: v.interiorGenericColor || undefined,

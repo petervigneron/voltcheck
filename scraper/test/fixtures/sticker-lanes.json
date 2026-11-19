@@ -1,0 +1,582 @@
+{
+ "ddcSif": {
+  "vin": "3FMTK3R78TMA03282",
+  "type": "new",
+  "condition": "New",
+  "year": 2026,
+  "make": "Ford",
+  "model": "Mustang Mach-E",
+  "trim": "Premium",
+  "fuelType": "Other",
+  "trackingPricing": {
+   "internetPrice": "54790",
+   "salePrice": "54945",
+   "retailValue": "0",
+   "msrp": "$55,840",
+   "askingPrice": "55840"
+  },
+  "pricing": {
+   "dprice": [
+    {
+     "label": "MSRP<sup>1</sup>",
+     "type": "MIDDLE",
+     "typeClass": "msrp",
+     "value": "$55,840"
+    },
+    {
+     "label": "Total Fees",
+     "type": "MIDDLE",
+     "typeClass": "totalFees",
+     "value": "$122"
+    },
+    {
+     "label": "Walnut Creek Ford Discount",
+     "type": "-",
+     "typeClass": "ABCRule",
+     "value": "$1,050",
+     "isDiscount": true
+    },
+    {
+     "label": "Total Price",
+     "type": "TOTAL",
+     "typeClass": "priceAfterFees",
+     "value": "$54,912"
+    },
+    {
+     "incentiveId": "walnutcreekfordfd_f9011f71ac184ff5439ad3af832b6eb7",
+     "label": "Offers",
+     "type": "SICI",
+     "typeClass": "SICRule",
+     "value": "$1,500"
+    },
+    {
+     "incentiveId": "walnutcreekfordfd_z1469fad9c75e45893971c0ec5de9467",
+     "label": "Offers",
+     "type": "SICI",
+     "typeClass": "SICRule",
+     "value": "$500"
+    },
+    {
+     "incentiveId": "walnutcreekfordfd_f6aa4a31ac180e093b358fc306f967c0",
+     "label": "Offers",
+     "type": "SICI",
+     "typeClass": "SICRule",
+     "value": "$2,000"
+    },
+    {
+     "incentiveId": "walnutcreekfordfd_z8149399344a6ca323381df65bf7ec1c",
+     "label": "Offers",
+     "type": "SICI",
+     "typeClass": "SICRule",
+     "value": "$500"
+    },
+    {
+     "label": "Net Price",
+     "type": "SIF",
+     "typeClass": "SIFRule",
+     "value": "$50,412",
+     "isFinalPrice": true
+    }
+   ]
+  }
+ },
+ "ddcMarkup": {
+  "vin": "W1KRJ8CB7TF012816",
+  "type": "new",
+  "condition": "New",
+  "year": 2026,
+  "make": "Mercedes-Benz",
+  "model": "AMG GT 63",
+  "trim": "S E Performance",
+  "fuelType": "Hybrid",
+  "trackingPricing": {
+   "internetPrice": "230860",
+   "salePrice": "230860",
+   "retailValue": "215860",
+   "msrp": "$215,860",
+   "askingPrice": "230860"
+  },
+  "pricing": {
+   "dprice": [
+    {
+     "label": "MSRP",
+     "type": "MIDDLE",
+     "typeClass": "msrp",
+     "value": "$215,860"
+    },
+    {
+     "label": "Market Adjustment",
+     "type": "+",
+     "typeClass": "ABCRule",
+     "value": "$15,000",
+     "isDiscount": false
+    },
+    {
+     "label": "Total Fees",
+     "type": "MIDDLE",
+     "typeClass": "totalFees",
+     "value": "$122"
+    },
+    {
+     "label": "Selling Price",
+     "type": "TOTAL",
+     "typeClass": "priceAfterFees",
+     "value": "$230,982",
+     "isFinalPrice": true
+    }
+   ]
+  }
+ },
+ "ddcInternet": {
+  "vin": "7YAKNDDC1VY078276",
+  "type": "new",
+  "condition": "New",
+  "year": 2027,
+  "make": "Hyundai",
+  "model": "IONIQ 5",
+  "trim": "SEL",
+  "fuelType": "Electric",
+  "trackingPricing": {
+   "internetPrice": "45954",
+   "salePrice": "$47,024",
+   "retailValue": "0",
+   "msrp": "$46,225",
+   "askingPrice": "$46,204"
+  },
+  "pricing": {
+   "dprice": [
+    {
+     "label": "MSRP",
+     "type": "MIDDLE",
+     "typeClass": "msrp",
+     "value": "$46,225"
+    },
+    {
+     "label": "Delivery & Handling Fee ",
+     "type": "MIDDLE",
+     "typeClass": "wholesalePrice",
+     "value": "$799"
+    },
+    {
+     "label": "Price",
+     "type": "MIDDLE",
+     "typeClass": "salePrice",
+     "value": "$47,024"
+    },
+    {
+     "label": "Dealer Discount",
+     "type": "-",
+     "typeClass": "ABCRule",
+     "value": "$820",
+     "isDiscount": true
+    },
+    {
+     "label": "Stevinson Price",
+     "type": "TOTAL",
+     "typeClass": "askingPrice",
+     "value": "$46,204",
+     "isFinalPrice": true
+    },
+    {
+     "incentiveId": "stevinsonhyundailongmont_z96e26af41898c0f8cc6024a909d935b",
+     "label": "Conditional Offers",
+     "type": "SICCI",
+     "typeClass": "SICCRule",
+     "value": "$500"
+    },
+    {
+     "incentiveId": "stevinsonhyundailongmont_f8a390d1ac1814952e781fa5ea65fb75",
+     "label": "Conditional Offers",
+     "type": "SICCI",
+     "typeClass": "SICCRule",
+     "value": "$500"
+    },
+    {
+     "incentiveId": "stevinsonhyundailongmont_z962e561a136f2f294bc95a94fc96204",
+     "label": "Conditional Offers",
+     "type": "SICCI",
+     "typeClass": "SICCRule",
+     "value": "$2,750"
+    }
+   ]
+  }
+ },
+ "ddcUsed": {
+  "vin": "5YM33CS08S9Y22070",
+  "type": "used",
+  "condition": "Used",
+  "year": 2025,
+  "make": "BMW",
+  "model": "XM",
+  "trim": "Label Red",
+  "fuelType": "Plug-In Hybrid",
+  "trackingPricing": {
+   "internetPrice": "$115,995",
+   "salePrice": "115995",
+   "retailValue": "133999",
+   "msrp": "$133,999",
+   "askingPrice": "115995"
+  },
+  "pricing": {
+   "dprice": [
+    {
+     "label": "Market Value",
+     "type": "MIDDLE",
+     "typeClass": "msrp",
+     "value": "$133,999"
+    },
+    {
+     "label": "Discount",
+     "type": "-",
+     "typeClass": "ABCRule",
+     "value": "$18,004",
+     "isDiscount": true
+    },
+    {
+     "label": "Envision Price",
+     "type": "MIDDLE",
+     "typeClass": "internetPrice",
+     "value": "$115,995"
+    },
+    {
+     "label": "Total Fees",
+     "type": "MIDDLE",
+     "typeClass": "totalFees",
+     "value": "$172"
+    },
+    {
+     "label": "Final Price",
+     "type": "TOTAL",
+     "typeClass": "priceAfterFees",
+     "value": "$116,167",
+     "isFinalPrice": true
+    }
+   ]
+  }
+ },
+ "ddcPleaseCall": {
+  "vin": "1GYC3NMLXVZ702605",
+  "type": "new",
+  "condition": "New",
+  "year": 2027,
+  "make": "CADILLAC",
+  "model": "VISTIQ",
+  "trim": "Sport",
+  "fuelType": "Electric",
+  "trackingPricing": {
+   "internetPrice": "PLEASE_CALL",
+   "salePrice": "0",
+   "retailValue": "PLEASE_CALL",
+   "msrp": "PLEASE_CALL",
+   "askingPrice": "0"
+  },
+  "pricing": {
+   "dprice": [
+    {
+     "label": "MSRP",
+     "type": "UNKNOWN",
+     "typeClass": "msrp",
+     "value": "PLEASE_CALL"
+    },
+    {
+     "label": "Price",
+     "type": "UNKNOWN",
+     "typeClass": "retailValue",
+     "value": "PLEASE_CALL"
+    },
+    {
+     "label": "Document Fee",
+     "type": "TOTAL",
+     "typeClass": "documentFee",
+     "value": "$225",
+     "isFinalPrice": true
+    },
+    {
+     "label": "Final Price",
+     "type": "UNKNOWN",
+     "typeClass": "internetPrice",
+     "value": "PLEASE_CALL"
+    }
+   ]
+  }
+ },
+ "deolGlobal": {
+  "VehicleVin": "1V2DSPE89TC000907",
+  "VehicleYear": 2026,
+  "VehicleMake": "Volkswagen",
+  "VehicleModel": "ID.4",
+  "VehicleTrim": "Pro",
+  "VehicleType": "new",
+  "VehicleCondition": "New",
+  "VehicleFuelType": "Electric",
+  "VehicleMsrp": 51332,
+  "VehicleInternetPrice": 0,
+  "VehiclePriceLibrary": "TVNSUDo1MTMzMi4wO0ludGVybmV0IFByaWNlOjQ4OTc0LjA7U2VsbGluZyBQcmljZTozOTY2OC4wO0ZFRUQgLSB2QXV0byAtIERlYWxlckRpc2NvdW50ZWQ6NDg5NzQuMDtHbG9iYWw6MTAwMDAuMDtjYWxjX1N0YXJ0ZXJQcmljZU1TUlA6NTEzMzIuMDtjYWxjX0RlYWxlciBEaXNjb3VudDoyMzU4LjA7Y2FsY19JTlRFUk5FVCBQUklDRTo0ODk3NC4wO2NhbGNfT0VNIFNhdmluZ3M6MTAwMDAuMDtjYWxjX0ZJTkFMIFBSSUNFOjM4OTc0LjA7Y2FsY19Zb3UgU2F2ZToxMjM1OC4w"
+ },
+ "deolFees": {
+  "VehicleVin": "7YAMS5S11TY008430",
+  "VehicleYear": 2026,
+  "VehicleMake": "Hyundai",
+  "VehicleModel": "IONIQ 9",
+  "VehicleTrim": "S",
+  "VehicleType": "new",
+  "VehicleCondition": "New",
+  "VehicleFuelType": "Electric",
+  "VehicleMsrp": 61785,
+  "VehicleInternetPrice": 0,
+  "VehiclePriceLibrary": "TVNSUDo2MTc4NS4wO0ludGVybmV0IFByaWNlOjU4Nzg1LjA7R2xvYmFsOjcwMDAuMDtQcmljZVN0YWsgTGluZS1JdGVtIEluY2VudGl2ZXMgLSBHbG9iYWw6NzAwMC4wO1ByaWNlU3RhayBMaW5lLUl0ZW0gSW5jZW50aXZlcyAtIENvbmRpdGlvbmFsOjE2OTAwLjA7Y2FsY19NU1JQOjYxNzg1LjA7Y2FsY19EZWFsZXIgRGlzY291bnQ6MzAwMC4wO2NhbGNfSU5URVJORVQgUFJJQ0U6NTg5MDcuMDtjYWxjX09FTSBTYXZpbmdzOjcwMDAuMDtjYWxjX0ZJTkFMIFBSSUNFOjUxOTA3LjA7Y2FsY19Zb3UgU2F2ZTo5ODc4LjA7Y2FsY19PRU0gU2F2aW5ncyBDb25kaXRpb25hbDoxNjkwMC4wO2NhbGNfQ29uZGl0aW9uYWwgRmluYWwgUHJpY2U6MzUwMDcuMDtjYWxjX0NvbmRpdGlvbmFsIFlvdSBTYXZlOjI2Nzc4LjA7Y2FsY19kb2MgZmVlOjg1LjA7Y2FsY19FbGVjdHJvbmljIEZpbGluZyBDaGFyZ2U6MzcuMA=="
+ },
+ "tvVolvo": {
+  "dealerID": 42781,
+  "type": "New",
+  "vin": "YV4EK3CL5T2601661",
+  "year": "2026",
+  "make": "Volvo",
+  "model": "EX30",
+  "trim": "Ultra",
+  "miles": 8,
+  "certified": false,
+  "msrp": 49945,
+  "sellingPrice": 46945,
+  "yourPrice": 45445,
+  "purchasePrice": 45445,
+  "internetPrice": 0,
+  "cashRebates": 1500,
+  "buyForRebate": 0,
+  "buyForDiscount": 0,
+  "dealerDiscount": 0,
+  "dealerDiscountedPrice": 0,
+  "dynamicPriceStack": {
+   "lease": {
+    "monthlyPayment": 572.81,
+    "dueAtSigning": 9989,
+    "cashRebates": 1500,
+    "termMonths": 72
+   },
+   "finance": {
+    "monthlyPayment": 572.81,
+    "downPayment": 9989,
+    "cashRebates": 1500,
+    "termMonths": 72
+   },
+   "cash": {
+    "msrp": 49945,
+    "discount": 3122,
+    "rebates": 1500,
+    "fees": 122,
+    "dealerMarkup": 0,
+    "finalPrice": 45567,
+    "finalPriceLabel": "MSRP - Discounts & Rebates + Fees"
+   }
+  },
+  "fuel_Type": "Fully electric",
+  "isElectric": true,
+  "vdpUrl": "https://www.volvocarssandiego.com/viewdetails/new/YV4EK3CL5T2601661"
+ },
+ "tvParkway": {
+  "dealerID": 54656,
+  "type": "New",
+  "vin": "3KMDB4DA5VE005258",
+  "year": "2027",
+  "make": "Kia",
+  "model": "EV3",
+  "trim": "Wind",
+  "miles": 9,
+  "certified": false,
+  "msrp": 36485,
+  "sellingPrice": 33416,
+  "yourPrice": 33416,
+  "purchasePrice": 33416,
+  "internetPrice": 33416,
+  "cashRebates": 1500,
+  "buyForRebate": 1500,
+  "buyForDiscount": 1569,
+  "dealerDiscount": 0,
+  "dealerDiscountedPrice": 34916,
+  "dynamicPriceStack": {
+   "lease": {
+    "monthlyPayment": 507.78,
+    "dueAtSigning": 3648,
+    "cashRebates": 1500,
+    "termMonths": 72
+   },
+   "finance": {
+    "monthlyPayment": 507.78,
+    "downPayment": 3648,
+    "cashRebates": 1500,
+    "termMonths": 72
+   },
+   "cash": {
+    "msrp": 36485,
+    "discount": 1794,
+    "rebates": 1500,
+    "fees": 225,
+    "dealerMarkup": 0,
+    "finalPrice": 33641,
+    "finalPriceLabel": "MSRP - Discounts & Rebates + Fees"
+   }
+  },
+  "fuel_Type": "Electric",
+  "isElectric": false,
+  "vdpUrl": ""
+ },
+ "tvMckenna": {
+  "dealerID": 46546,
+  "type": "New",
+  "vin": "1V2DSPE83TC000532",
+  "year": "2026",
+  "make": "Volkswagen",
+  "model": "ID.4",
+  "trim": "Pro",
+  "miles": 5,
+  "certified": false,
+  "msrp": 50972,
+  "sellingPrice": 30972,
+  "yourPrice": 30972,
+  "purchasePrice": 30972,
+  "internetPrice": 0,
+  "cashRebates": 13500,
+  "buyForRebate": 13500,
+  "buyForDiscount": 0,
+  "dealerDiscount": 0,
+  "dealerDiscountedPrice": 44472,
+  "dynamicPriceStack": null,
+  "fuel_Type": "Electric Fuel System",
+  "isElectric": true,
+  "vdpUrl": ""
+ },
+ "tvGg": {
+  "dealerID": 46677,
+  "type": "New",
+  "vin": "3KMDA3DB3VE006043",
+  "year": "2027",
+  "make": "Kia",
+  "model": "EV3",
+  "trim": "Light",
+  "miles": 0,
+  "certified": false,
+  "msrp": 31385,
+  "sellingPrice": 30007,
+  "yourPrice": 29885,
+  "purchasePrice": 31385,
+  "internetPrice": 0,
+  "cashRebates": 0,
+  "buyForRebate": 1500,
+  "buyForDiscount": 0,
+  "dealerDiscount": 0,
+  "dealerDiscountedPrice": 31385,
+  "dynamicPriceStack": null,
+  "fuel_Type": "Electric Fuel System",
+  "isElectric": false,
+  "vdpUrl": ""
+ },
+ "gm": {
+  "id": "3GN7DNRR6TS124036",
+  "make": "Chevrolet",
+  "model": "Equinox EV",
+  "year": "2026",
+  "driveType": "AWD",
+  "variant": {
+   "code": "1MB48_2LT",
+   "name": "LT",
+   "chromeStyleId": "476420"
+  },
+  "stockDetails": {
+   "type": "DealerStock",
+   "stockNumber": "E54700",
+   "condition": "NEW"
+  },
+  "dealer": {
+   "name": "GRAND ISLAND CHEVROLET GMC",
+   "postalCode": "688035601"
+  },
+  "pricing": {
+   "cash": {
+    "msrp": {
+     "value": "49695.0",
+     "prefix": "$"
+    },
+    "baseDealerFeaturedPrice": {
+     "value": "43402.0",
+     "prefix": "$"
+    },
+    "dealerFeaturedPrice": {
+     "value": "41902.0",
+     "prefix": "$"
+    },
+    "netPrice": {
+     "value": "41201.0",
+     "prefix": "$"
+    },
+    "discounts": {
+     "oem": {
+      "value": "1000.0",
+      "prefix": "$"
+     }
+    }
+   },
+   "specialIncentive": {}
+  }
+ },
+ "kia": {
+  "vin": "3KMDB4DA5VE008371",
+  "year": "2027",
+  "model": "EV3",
+  "trim": "Wind",
+  "msrp": "38630",
+  "dealerPrice": "37807",
+  "seriesId": "9AE",
+  "status": "DS",
+  "dealer": {
+   "code": "NJ057"
+  }
+ },
+ "hyundai": {
+  "vin": "7YAKNDDC5VY082069",
+  "modelYear": 2027,
+  "model": "IONIQ 5",
+  "modelDisplayName": "IONIQ 5",
+  "make": "HYUNDAI",
+  "trimDisplayName": "SEL",
+  "msrp": 45350,
+  "startingMsrp": 45350,
+  "dealerInternetPrice": 45333,
+  "dealerCode": "CO032",
+  "aem": {
+   "fuelType": [
+    "Electric"
+   ]
+  }
+ },
+ "bmw": {
+  "vin": "WBY63HG00VCY99680",
+  "name": "i5 eDrive40",
+  "modelYear": 2027,
+  "totalMsrp": 77900,
+  "baseMsrp": 67100,
+  "fuelType": "E",
+  "used": false,
+  "sold": false
+ },
+ "diNew": {
+  "vin": "3GYK3BM47VS114936",
+  "url": "https://www.pepecadillac.com/inventory/new-2027-cadillac-optiq-luxury-all-wheel-drive-suv-3gyk3bm47vs114936/",
+  "result": true,
+  "fuel": "electric",
+  "blob": {
+   "vin": "3GYK3BM47VS114936",
+   "stock": "270154",
+   "type": "New",
+   "year": "2027",
+   "make": "Cadillac",
+   "model": "OPTIQ",
+   "trim": "Luxury",
+   "exterior_color": "Black Raven",
+   "price": 56403,
+   "bodystyle": "SUVs",
+   "fueltype": "electric",
+   "msrp": 56143,
+   "date_in_stock": "2026-10-03T00:00:00.000Z"
+  }
+ }
+}

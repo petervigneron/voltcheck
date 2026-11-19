@@ -1,6 +1,7 @@
 // schema.org Vehicle → one normalized listing record, VIN-keyed.
 import { JSONLD, offerProvenance } from "./price-provenance.mjs";
 import { cut } from "./well-formed.mjs";
+import { stickerFields } from "./sticker.mjs";
 
 // Feeds hand us HTML-encoded text, and an undecoded entity is not a cosmetic
 // problem — it changes what the string IS. web/lib/enrichment/match.ts keys on
@@ -230,6 +231,10 @@ export function normalize(vehicle, { sourceUrl, dealerDomain }) {
     // an absent price is not an observation of one.
     priceProvenance:
       num(pricedOffer?.price) != null ? (offerProvenance(pricedOffer) ?? JSONLD) : undefined,
+    // The car's own sticker and whether this price has manufacturer incentives
+    // taken off it, when a platform extractor read them (lib/sticker.mjs). The
+    // flag is kept only if it was judged on the price read just above.
+    ...stickerFields(vehicle, num(pricedOffer?.price)),
     mileage: num(mileageObj?.value ?? mileageObj),
     exteriorColor: text(vehicle.color),
     interiorColor: text(vehicle.vehicleInteriorColor),

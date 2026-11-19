@@ -92,6 +92,22 @@ export interface Listing {
    * the evidence bars. Shaped and gated by lib/listings/vinHistory.ts.
    */
   vinHistory?: import("./vinHistory").VinHistory;
+  /**
+   * The car's own sticker (MSRP) as its crawl lane read it — NEW cars only,
+   * whole dollars, gated in scraper/lib/sticker.mjs. Not displayed anywhere
+   * yet; the consumer it exists for is the new-car price band (branch
+   * new-car-band, lib/listings/newCarBand.ts).
+   */
+  msrpUsd?: number;
+  /**
+   * RAW — read it only through incentiveBasis() (lib/listings/incentiveBasis.ts).
+   * Whether the price recorded in priceBeforeIncentivesUsd had manufacturer
+   * incentives taken off it: true = none, false = some, absent = cannot tell.
+   * It says nothing about priceUsd once priceUsd has moved off that number,
+   * which the database can do without the crawl (0103's kept price, recheck).
+   */
+  priceBeforeIncentives?: boolean;
+  priceBeforeIncentivesUsd?: number;
   prevPriceUsd?: number; // the asking price before the current one
   priceChangedAt?: string; // when the current price took effect
   /**

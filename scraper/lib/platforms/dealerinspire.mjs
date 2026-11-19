@@ -203,6 +203,7 @@ import { evish } from "../sitemap.mjs";
 import { EV_ONLY_WMIS } from "../ev.mjs";
 import { decodeEntities } from "../normalize.mjs";
 import { DI_CARD_PRICE } from "../price-provenance.mjs";
+import { STICKER, stickerDollars, withSticker } from "../sticker.mjs";
 
 // The vendor's own hosts and theme names on a served page. Never the bare
 // word: fingerprint.mjs's /dealerinspire/i is for pages we already read.
@@ -365,6 +366,19 @@ export function cardMileage(segment) {
   return null;
 }
 
+/** The card's own sticker: the `data-vehicle` blob's `msrp`, for a card whose
+ *  blob `type` is exactly "New" (the platform's own condition field — the
+ *  same test the card node's itemCondition is built from). No incentive basis
+ *  is claimed from a card: the blob carries `price` and `msrp` and nothing
+ *  that says what lies between them, so the flag is left to ingest's one
+ *  rule (a price equal to the sticker has nothing taken off it). */
+export function dealerInspireCardSticker(card) {
+  const b = card?.blob;
+  if (!b || !/^new$/i.test(String(b.type ?? "").trim())) return null;
+  const msrpUsd = stickerDollars(typeof b.msrp === "number" ? b.msrp : String(b.msrp ?? "").trim());
+  return msrpUsd == null ? null : { msrpUsd };
+}
+
 /** The listing a result card already states, as the schema.org-shaped node
  *  crawl.mjs normalizes — or null when the blob cannot name the car (no
  *  year, make or model), in which case the VDP is still needed. `__fromCard`
@@ -411,7 +425,8 @@ export function dealerInspireCardVehicle(card) {
   if (s(b.stock)) v.sku = s(b.stock);
   if (s(b.bodystyle)) v.bodyType = s(b.bodystyle);
   if (card.mileage != null) v.mileageFromOdometer = { "@type": "QuantitativeValue", value: String(card.mileage), unitCode: "SMI" };
-  return v;
+  const sticker = dealerInspireCardSticker(card);
+  return sticker ? withSticker(v, sticker) : v;
 }
 
 /** Is a 200 actually this vendor's SRP? A page carrying no cards AND none of
@@ -729,6 +744,12 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
         continue;
       }
       if (!needed) enriched++;
+      // The VDP's node replaces the card's, price and all, but the card's
+      // sticker is still this car's sticker: carry it, without any flag —
+      // the VDP's JSON-LD price is a different reading (DI_CARD_PRICE's note)
+      // and ingest judges it against the sticker afresh.
+      const sticker = dealerInspireCardSticker(c);
+      if (sticker && !v[STICKER]) withSticker(v, sticker);
       byVin.set(c.vin, v);
     }
     return true;

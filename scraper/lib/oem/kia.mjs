@@ -27,6 +27,7 @@
 //     negligible gap (as with the GM lane)
 import { politePostJson } from "../http.mjs";
 import { pickTaggedPrice } from "../price-provenance.mjs";
+import { stickerDollars, stickerRecord } from "../sticker.mjs";
 
 export const KIA = {
   key: "kia",
@@ -114,7 +115,7 @@ const imageUrl = (imgs) => {
   return s.startsWith("/") ? `https://www.kia.com${s}` : s.startsWith("http") ? s : undefined;
 };
 
-function toRecord(hit, series) {
+export function toRecord(hit, series) {
   const vin = String(hit.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
   const year = Number(hit.year);
@@ -141,6 +142,12 @@ function toRecord(hit, series) {
     trim: hit.trim || undefined,
     priceUsd,
     priceProvenance,
+    // The sticker (lib/sticker.mjs): `msrp`, on the new-stock endpoint (status
+    // DS/IT). Agreed to the dollar with the selling dealer's own MSRP on all 142
+    // new co-listed VINs (dealer.com, DealerOn, Team Velocity; 2026-11-18). The
+    // record carries dealerPrice and msrp and nothing between them, so no
+    // incentive basis is claimed beyond ingest's price-equals-sticker rule.
+    ...stickerRecord({ msrpUsd: stickerDollars(hit.msrp), priceUsd }),
     driveLine: drive(hit.edwTrim || hit.trim),
     exteriorColor: hit.extColor || undefined,
     interiorColor: hit.intColor || undefined,

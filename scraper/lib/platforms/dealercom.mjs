@@ -5,6 +5,8 @@
 import { priceFloor } from "../price-floor.mjs";
 import { JSONLD, DDC_INTERNET, DDC_SALE, DDC_ASKING, DDC_MSRP } from "../price-provenance.mjs";
 import { text } from "../normalize.mjs";
+import { conditionToken } from "../condition.mjs";
+import { stickerDollars, stickerRecord } from "../sticker.mjs";
 
 const MARKER = /DDC\.dataLayer\[['"]vehicles['"]\]\s*=\s*\[/;
 
@@ -199,6 +201,99 @@ export function resolveDdcPriceTagged(rec, d) {
 
 const ABSTAIN_RESULT = { priceUsd: PRICE_ABSTAIN, provenance: undefined };
 
+// ── Is the resolved price before manufacturer incentives? ───────────────────
+//
+// The inventory API (dealercom-api.mjs) carries the VDP's whole price ladder as
+// `pricing.dprice`, one typed row per line, and the row the platform flags
+// isFinalPrice is the number the resolver's `jsonld` leg reads. Read off 8
+// rooftops on 2026-11-18 (636 new EVs; every shape below seen live):
+//
+//   MIDDLE/msrp "MSRP"                       the sticker
+//   MIDDLE/totalFees, documentFee, wholesalePrice, retailValue, salePrice
+//                                            reference lines, nothing subtracted
+//   -/ABCRule, -/AsubBRule  (isDiscount)     the DEALER's pricing rules: "Dealer
+//                                            Discount", "Walnut Creek Ford
+//                                            Discount", "Savings", "Dealer Savings"
+//   +/ABCRule                                dealer add-ons: "Market Adjustment",
+//                                            "Ceramic Tint"
+//   TOTAL/<askingPrice|priceAfterFees|internetPrice|msrp>
+//                                            the dealer's price — "Total Price",
+//                                            "Stevinson Price", "Selling Price"
+//   SICI/SICRule "Offers"                    incentives SUBTRACTED from the total
+//   SIF/SIFRule  "Net Price" / "<Dealer> Price"
+//                                            total minus the SICI rows
+//   SICCI/SICCRule "Conditional Offers"      listed AFTER the final price and not
+//                                            subtracted from it
+//
+// walnutcreekford.com, a 2026 Mach-E: MSRP $55,840 + fees $122 − Walnut Creek
+// Ford Discount $1,050 = Total Price $54,912; four "Offers" rows ($1,500,
+// $500, $2,000, $500) take it to Net Price $50,412, flagged isFinalPrice. That
+// $50,412 is what the resolver stores — Ford's $4,500 retail stack is in it —
+// and it is exactly the mixture the 2026-11-18 study could not compare.
+//
+// So, for a price the resolver took from the final row:
+//   - final row is SIF (net of SICI rows with a value)          → false;
+//   - final row is a TOTAL/msrp row with no SICI row above it,
+//     every row above it of a class listed here, and no dealer-rule
+//     row whose label names a rebate or incentive              → true;
+//   - anything else (a final row whose value is not the stored
+//     price, an unknown row class, a SICI row above a non-SIF
+//     final, a "documentFee" final row)                          → absent.
+// The label check is belt and braces: no ABCRule row in the sample was
+// labelled as manufacturer money, but a rooftop that folds Ford's rebates into
+// its own "Savings" rule would make `true` false, and a word is all there is
+// to catch it with.
+const LADDER_BEFORE = new Set([
+  "msrp", "totalFees", "documentFee", "wholesalePrice", "retailValue",
+  "salePrice", "askingPrice", "internetPrice", "priceAfterFees", "ABCRule", "AsubBRule",
+]);
+const LADDER_TOTAL = new Set(["askingPrice", "priceAfterFees", "internetPrice", "msrp", "salePrice"]);
+const INCENTIVE_WORDS = /rebate|incentive|bonus|cash|manufacturer|factory|\boem\b|conquest|loyalty|lease|financ|apr\b|offer/i;
+const ladderNum = (v) => {
+  const n = Number(String(v ?? "").replace(/[^0-9.]/g, ""));
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+};
+const stripTags = (s) => String(s ?? "").replace(/<[^>]*>/g, " ");
+const isIncluded = (row) => row?.type === "SICI" || row?.typeClass === "SICRule";
+
+export function ddcLadderBasis(ladder, priceUsd) {
+  if (!Array.isArray(ladder) || !(priceUsd > 0)) return undefined;
+  const finalAt = ladder.findIndex((r) => r?.isFinalPrice);
+  if (finalAt < 0) return undefined;
+  const final = ladder[finalAt];
+  if (ladderNum(final.value) !== priceUsd) return undefined;
+  const above = ladder.slice(0, finalAt);
+  const included = above.filter(isIncluded);
+  if (final.type === "SIF" || final.typeClass === "SIFRule") {
+    return included.some((r) => ladderNum(r.value) != null) ? false : undefined;
+  }
+  if (included.length) return undefined;
+  if (!(final.type === "TOTAL" || final.typeClass === "msrp") || !LADDER_TOTAL.has(final.typeClass)) return undefined;
+  for (const r of above) {
+    if (!LADDER_BEFORE.has(r?.typeClass)) return undefined;
+    if ((r.typeClass === "ABCRule" || r.typeClass === "AsubBRule") && INCENTIVE_WORDS.test(stripTags(r.label))) return undefined;
+  }
+  return true;
+}
+
+/** The car's sticker and the incentive basis of the resolved price, for a car
+ *  dealer.com's own MACHINE condition calls new: the API record's `type`
+ *  (dealercom-api.mjs passes it as `machineCondition`), or the data layer's
+ *  `newOrUsed` on the HTML path. Never the storefront's display string, and
+ *  never a used car — on a used car `msrp` is the dealer's book value. */
+export function ddcSticker(d, resolved) {
+  const machine = "machineCondition" in d ? d.machineCondition : conditionToken(d.newOrUsed);
+  if (machine !== "new") return {};
+  const msrpUsd = stickerDollars(d.msrp);
+  if (msrpUsd == null) return {};
+  let flag;
+  if (resolved.priceUsd > 0) {
+    if (resolved.provenance === DDC_MSRP) flag = true;
+    else if (resolved.provenance === JSONLD) flag = ddcLadderBasis(d.ladder, resolved.priceUsd);
+  }
+  return stickerRecord({ msrpUsd, priceBeforeIncentives: flag, priceUsd: resolved.priceUsd });
+}
+
 // Merge DDC fields into a normalized record (DDC wins where present — it's
 // the platform's own structured data, richer than the JSON-LD summary).
 // String fields go through text(): DDC serializes missing values as literal
@@ -223,6 +318,13 @@ export function enrichFromDdc(rec, ddcVehicle) {
     // is only the resolver's jsonld candidate, and the resolver may well have
     // taken a DDC field over it. An abstain clears the tag with it.
     priceProvenance: resolved.provenance,
+    // The sticker and the incentive basis beside the price (ddcSticker above;
+    // lib/sticker.mjs for the rules). Cleared first: the resolve above may have
+    // replaced the number an earlier reading was judged on.
+    msrpUsd: undefined,
+    priceBeforeIncentives: undefined,
+    priceBeforeIncentivesUsd: undefined,
+    ...ddcSticker(d, resolved),
     optionCodes: Array.isArray(d.optionCodes) && d.optionCodes.length ? d.optionCodes : undefined,
     certified: d.certified === "true" || d.certified === true || undefined,
     stockNumber: text(d.stockNumber),

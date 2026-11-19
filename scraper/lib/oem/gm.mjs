@@ -23,6 +23,7 @@
 import { politePostJson } from "../http.mjs";
 import { stabilizeImages } from "../images.mjs";
 import { pickTaggedPrice } from "../price-provenance.mjs";
+import { stickerDollars, stickerRecord } from "../sticker.mjs";
 
 export const GM_BRANDS = [
   { key: "chevrolet", host: "www.chevrolet.com", prefix: "chevrolet", programId: "CHEVROLET", domain: "chevrolet.com", make: "Chevrolet", minExpected: 2000 },
@@ -95,7 +96,7 @@ function shortImageUrl(url) {
   return m ? `${m[1]}${m[2]}gmds4.jpg&v=deg43&std=true&country=US` : undefined;
 }
 
-function toRecord(hit, brand) {
+export function toRecord(hit, brand) {
   const vin = String(hit.id ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
   const year = Number(hit.year);
@@ -112,6 +113,16 @@ function toRecord(hit, brand) {
   const condRaw = String(hit.stockDetails?.condition ?? "").toUpperCase();
   const condition =
     condRaw === "NEW" ? "new" : /CERT|CPO/.test(condRaw) ? "certified" : /USED|PRE.?OWNED/.test(condRaw) ? "used" : undefined;
+  // The car's own sticker, on a car the record's stockDetails.condition calls
+  // NEW: pricing.cash.msrp agreed to the dollar with the selling dealer's own
+  // dealer.com/DealerOn MSRP on all 80 co-listed VINs checked (2026-11-18). No
+  // incentive basis is claimed beyond ingest's price-equals-sticker rule:
+  // dealerFeaturedPrice sits under baseDealerFeaturedPrice by an unexplained
+  // $1,500-$2,500 on some cars (a 2026 Equinox EV, 43,402 → 41,902) while the
+  // record's only named incentive, discounts.oem, is $1,000 and is taken off
+  // AFTER it (netPrice) — so what lies between the sticker and the featured
+  // price cannot be told from the fields (lib/sticker.mjs).
+  const msrpUsd = condition === "new" ? stickerDollars(Number(cash.msrp?.value)) : undefined;
   const imageUrl = shortImageUrl(hit.images?.[0]?.url);
   const model = String(hit.model ?? "").trim();
   if (!model) return null;
@@ -124,6 +135,7 @@ function toRecord(hit, brand) {
     trim: hit.variant?.name || undefined,
     priceUsd,
     priceProvenance,
+    ...stickerRecord({ msrpUsd, priceUsd }),
     mileage: Number.isFinite(hit.mileage) ? Math.round(hit.mileage) : undefined,
     exteriorColor: hit.baseExteriorColor || undefined,
     driveLine: ["FWD", "AWD", "RWD", "4WD"].includes(hit.driveType) ? hit.driveType : undefined,

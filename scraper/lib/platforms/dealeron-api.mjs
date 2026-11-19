@@ -30,6 +30,7 @@ import { conditionToken } from "../condition.mjs";
 import { fetchPage, politeGetJson } from "../http.mjs";
 import { stabilizeImages } from "../images.mjs";
 import { JSONLD, DEOL_INTERNET, DEOL_SELLING, DEOL_MSRP, DEOL_CARD_INTERNET } from "../price-provenance.mjs";
+import { stickerDollars, withSticker } from "../sticker.mjs";
 
 const API_VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
 
@@ -142,12 +143,29 @@ const libraryPrice = (v) => (typeof v === "string" && !PRICE_CHARS.test(v) ? und
 // on why an unverified match is worse than no match.
 export function priceFromLibraryTagged(b64) {
   const none = { price: undefined, provenance: undefined };
-  if (typeof b64 !== "string" || !b64) return none;
+  const fields = libraryFields(b64);
+  if (!fields) return none;
+  for (const [key, provenance] of [
+    ["calc_internet price", JSONLD],
+    ["internet price", DEOL_INTERNET],
+    ["selling price", DEOL_SELLING],
+    ["msrp", DEOL_MSRP],
+  ]) {
+    const price = libraryPrice(fields.get(key));
+    if (price != null) return { price, provenance };
+  }
+  return none;
+}
+
+/** The decoded price library as label (lowercased) → raw value string, or
+ *  null when there is no library to read. */
+export function libraryFields(b64) {
+  if (typeof b64 !== "string" || !b64) return null;
   let txt;
   try {
     txt = Buffer.from(b64, "base64").toString("utf8");
   } catch {
-    return none;
+    return null;
   }
   const fields = new Map();
   for (const part of txt.split(";")) {
@@ -177,16 +195,86 @@ export function priceFromLibraryTagged(b64) {
     const i = part.lastIndexOf(":");
     if (i > 0) fields.set(part.slice(0, i).trim().toLowerCase(), part.slice(i + 1).trim());
   }
-  for (const [key, provenance] of [
-    ["calc_internet price", JSONLD],
-    ["internet price", DEOL_INTERNET],
-    ["selling price", DEOL_SELLING],
-    ["msrp", DEOL_MSRP],
-  ]) {
-    const price = libraryPrice(fields.get(key));
-    if (price != null) return { price, provenance };
+  return fields;
+}
+
+// ── Is the card's price before manufacturer incentives? ─────────────────────
+//
+// The price library is each rooftop's own ladder, and its lines are named by
+// the rooftop, not the platform — but the incentive lines come from DealerOn's
+// incentive feed and keep their names. Read off 5 rooftops on 2026-11-18 (446
+// new EVs) the library carries, beside MSRP and the dealer's own lines:
+//
+//   Global / PriceStak Line-Item Incentives - Global / calc_OEM Savings
+//                   unconditional manufacturer money
+//   Conditional / PriceStak Line-Item Incentives - Conditional /
+//   calc_OEM Savings Conditional
+//                   conditional manufacturer money
+//   calc_Dealer Discount   the dealer's own discount
+//   doc fee, Electronic Filing Charge, ToyotaDealerFeeAddOn, Dealer UpFits …
+//                   fees and add-ons
+//
+// and in every library read, the incentive lines are applied BELOW the stored
+// price, not inside it. valley-autos.com, a 2027 Kia: MSRP 51,332 − calc_Dealer
+// Discount 2,358 = calc_INTERNET PRICE 48,974 (the stored price); Global
+// 10,000 = calc_OEM Savings 10,000; calc_FINAL PRICE 38,974 = 48,974 − 10,000.
+//
+// Rooftops write their own calc formulas, so the library's word is not taken:
+// the stored price must be REBUILT from the sticker. true when price = MSRP −
+// dealer discount + some of the fee/add-on lines, to the dollar, and the same
+// arithmetic with the unconditional incentive subtracted too does NOT also
+// fit; false when only the version with the incentive subtracted fits; absent
+// otherwise — including any library whose "Dealer Discount minus Rebates"
+// line differs from its "Dealer Discount" (the discount then has rebates in
+// it), and any price the arithmetic cannot rebuild at all.
+const FEE_LINE = /fee|filing|add-?on|upfit|accessor|tdsp|addendum|etch|tint|protection/;
+const NOT_A_FEE = /price|total|msrp|final|save|discount|incentive|oem|global|conditional|rebate/;
+const UNCONDITIONAL = ["global", "pricestak line-item incentives - global", "calc_oem savings"];
+const lineNum = (v) => {
+  if (typeof v !== "string" || !/^\s*\$?[0-9][0-9,]*(\.[0-9]+)?\s*$/.test(v)) return undefined;
+  const n = Number(v.replace(/[$,\s]/g, ""));
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+};
+const near = (a, b) => Math.abs(a - b) < 1;
+
+export function deolLibraryBasis(fields, msrpUsd, priceUsd) {
+  if (!fields || !(msrpUsd > 0) || !(priceUsd > 0)) return undefined;
+  if (priceUsd === msrpUsd) return true;
+  const dd = lineNum(fields.get("calc_dealer discount")) ?? 0;
+  const ddNet = lineNum(fields.get("calc_dealer discount minus rebates"));
+  if (ddNet != null && !near(ddNet, dd)) return undefined;
+  const incentive = Math.max(0, ...UNCONDITIONAL.map((k) => lineNum(fields.get(k)) ?? 0));
+  const fees = [];
+  for (const [k, v] of fields) {
+    const key = k.replace(/^calc_/, "");
+    if (!FEE_LINE.test(key) || NOT_A_FEE.test(key)) continue;
+    const n = lineNum(v);
+    if (n != null && !fees.includes(n)) fees.push(n);
   }
-  return none;
+  if (fees.length > 6) return undefined; // a ladder this busy is not one to rebuild by search
+  const sums = [0];
+  for (const f of fees) for (const s of [...sums]) sums.push(s + f);
+  const fits = (base) => sums.some((s) => near(base + s, priceUsd));
+  const before = fits(msrpUsd - dd);
+  const after = incentive > 0 && fits(msrpUsd - dd - incentive);
+  if (before && !after) return true;
+  if (after && !before) return false;
+  return undefined;
+}
+
+/** Sticker facts for a VehicleCard whose machine token (VehicleType) says new:
+ *  the library's MSRP line, cross-checked against the card's VehicleMsrp (both
+ *  present and different → no MSRP at all), and the incentive basis of the
+ *  price the node carries. */
+export function deolSticker(vc, priceUsd) {
+  if (conditionToken(vc?.VehicleType) !== "new") return null;
+  const fields = libraryFields(vc.VehiclePriceLibrary);
+  const lib = stickerDollars(fields?.get("msrp"));
+  const card = stickerDollars(vc.VehicleMsrp);
+  if (lib != null && card != null && lib !== card) return null;
+  const msrpUsd = lib ?? card;
+  if (msrpUsd == null) return null;
+  return { msrpUsd, priceBeforeIncentives: deolLibraryBasis(fields, msrpUsd, priceUsd), forPrice: priceUsd };
 }
 
 const DRIVE_TOKENS = new Set(["FWD", "RWD", "AWD", "4WD"]);
@@ -283,7 +371,7 @@ export function vehicleNode(vc, origin) {
   const state = vc.DealerLocatedAtState || undefined;
   const dealerName = vc.VehicleLocationName || vc.DealerName || undefined;
 
-  return {
+  const node = {
     "@type": "Vehicle",
     vehicleIdentificationNumber: vin,
     vehicleModelDate: vc.VehicleYear != null ? String(vc.VehicleYear) : undefined,
@@ -320,6 +408,10 @@ export function vehicleNode(vc, origin) {
           : undefined,
     },
   };
+  // The sticker and whether this price has incentives in it (deolSticker;
+  // lib/sticker.mjs). Read beside the price, never used to choose it.
+  const sticker = price != null ? deolSticker(vc, price) : null;
+  return sticker ? withSticker(node, sticker) : node;
 }
 
 // 96, not 24, and the old comment ("the endpoint's cap — asking for more falls

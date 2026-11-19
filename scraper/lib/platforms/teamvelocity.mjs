@@ -111,6 +111,7 @@ import { classifyEv } from "../ev.mjs";
 import { politeGetJson } from "../http.mjs";
 import { TV_RETAIL, TV_SELLING } from "../price-provenance.mjs";
 import { text } from "../normalize.mjs";
+import { stickerDollars, withSticker } from "../sticker.mjs";
 
 const API = "https://websites.api.teamvelocityportal.com/tvm-services/inventory/vehicles";
 const API_LIMIT = 200;
@@ -245,7 +246,8 @@ export function teamVelocityApiVehicle(r, hostByDealerId) {
   }
   const cond = String(r.type ?? "").toLowerCase();
   const { price, provenance } = teamVelocityPrice(r);
-  return {
+  const msrpUsd = cond === "new" ? stickerDollars(r.msrp) : undefined;
+  const node = {
     "@type": "Vehicle",
     vehicleIdentificationNumber: vin,
     vehicleModelDate: r.year != null ? String(r.year) : undefined,
@@ -287,6 +289,57 @@ export function teamVelocityApiVehicle(r, hostByDealerId) {
     // fact about the car; the lane turns it into one (lib/carfax-snapshot.mjs).
     carfaxSnapshotKey: typeof r.carFax_SNAPSHOT_KEY === "string" && r.carFax_SNAPSHOT_KEY ? r.carFax_SNAPSHOT_KEY : undefined,
   };
+  return msrpUsd == null
+    ? node
+    : withSticker(node, { msrpUsd, priceBeforeIncentives: teamVelocityBasis(r, msrpUsd, price), forPrice: price });
+}
+
+// ── Sticker and incentive basis (lib/sticker.mjs) ───────────────────────────
+//
+// A NEW record (`type` "New", the machine field the node's itemCondition is
+// built from) carries `msrp`, which agreed to the dollar with Kia's and
+// Hyundai's own locator MSRP on all 77 co-listed VINs checked (ggkia.com,
+// parkwayfamilykia.com, hyundaiofsanbruno.com; 2026-11-18). Whether the stored
+// price has rebates in it is a per-rooftop answer: `sellingPrice` is MSRP on
+// some rooftops and MSRP − dealer discount − cash rebates on others
+// (parkwayfamilykia.com, a 2027 EV3: msrp 36,485, sellingPrice 33,416 =
+// 36,485 − 1,569 − 1,500 rebate). Most records carry the platform's own cash
+// stack, `dynamicPriceStack.cash` = {msrp, discount, rebates, fees,
+// finalPrice} with finalPrice = msrp − discount − rebates + fees, and that is
+// what tells the two apart:
+//   stored = finalPrice − fees + rebates, rebates > 0      → before (true)
+//   stored = finalPrice − fees,           rebates > 0      → net of them (false)
+//   stored = finalPrice − fees, no rebate on any field      → true
+//   no stack: stored = dealerDiscountedPrice − cashRebates  → false
+// and nothing else is claimed. volvocarssandiego.com, a 2026 EX30: msrp 49,945,
+// stack discount 3,122 / rebates 1,500 / fees 122 / finalPrice 45,567, stored
+// sellingPrice 46,945 = 45,567 − 122 + 1,500 → true.
+const money = (v) => {
+  const n = Number(v);
+  return Number.isFinite(n) && n >= 0 ? n : undefined;
+};
+export function teamVelocityBasis(r, msrpUsd, priceUsd) {
+  if (!(priceUsd > 0) || !(msrpUsd > 0)) return undefined;
+  if (priceUsd === msrpUsd) return true;
+  const ds = r?.dynamicPriceStack?.cash;
+  const fin = money(ds?.finalPrice);
+  const fees = money(ds?.fees);
+  const reb = money(ds?.rebates);
+  if (ds && money(ds.msrp) === msrpUsd && fin > 0 && fees != null && reb != null) {
+    const net = fin - fees;
+    if (reb > 0) {
+      if (priceUsd === net + reb) return true;
+      if (priceUsd === net) return false;
+      return undefined;
+    }
+    const anyRebate = [r.cashRebates, r.buyForRebate, r.dynamicPriceStack?.finance?.cashRebates, r.dynamicPriceStack?.lease?.cashRebates]
+      .some((v) => money(v) > 0);
+    return !anyRebate && priceUsd === net ? true : undefined;
+  }
+  const cr = money(r?.cashRebates);
+  const ddp = money(r?.dealerDiscountedPrice);
+  if (cr > 0 && ddp > 0 && priceUsd === ddp - cr) return false;
+  return undefined;
 }
 
 const apiUrl = (ids, page) =>

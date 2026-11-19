@@ -17,6 +17,7 @@ import { splitTeslaModel } from "./lib/tesla-nameplate.mjs";
 import { untrustedModel } from "./lib/model-trust.mjs";
 import { cut } from "./lib/well-formed.mjs";
 import { dealerNameFor, registryRooftopNames } from "./lib/registry-name.mjs";
+import { checkSticker, stickerBucketOn, stickerBucketsOn } from "./lib/sticker.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
 // Single-rooftop dealers have exactly one address — listings inherit it from
@@ -154,6 +155,24 @@ function modelYear(y) {
 // can never match an enrichment row — the matcher keys on make — and
 // vpic-enrich already had its chance to repair it from the VIN. Dropped
 // makes are logged because a genuinely new brand would land here too.
+// The new-car sticker and incentive basis (lib/sticker.mjs) reach the payload
+// in stages, by VIN bucket, because adding two keys to a payload rewrites the
+// row (payload equality IS row equality, migration 0025): every new car that
+// gains them costs one full row write in `listings` on the night it lands.
+// Measured 2026-11-18 on a 5% sample of the live table: ~104k live new cars,
+// ~49k rows already rewritten in a 24 h window. All buckets at once would add
+// ~65-85k rewrites to one night — roughly 2.5x a normal night's row writes, on
+// the instance whose 57014 timeouts track exactly that churn (db-sync.mjs's
+// CHUNK_BYTES note). STICKER_BUCKETS of 16 are on; 0 publishes nothing.
+// It rises by 4 a night (≈16-21k extra rewrites, under half a normal night)
+// to 16. A bucket once on stays on — the hash is of the VIN, so the same cars
+// keep their fields and never rewrite again unless the value changes.
+// The number itself comes from a calendar (lib/sticker.mjs stickerBucketsOn):
+// 4 on 2026-11-19, then 8, 12, and 16 from 2026-11-22. STICKER_BUCKETS in the
+// environment overrides it for a test or to stop the ramp (set it to 0, in
+// EVERY workflow that runs this script, or rows will flip between runs).
+const STICKER_BUCKETS = process.env.STICKER_BUCKETS != null && process.env.STICKER_BUCKETS !== "" ? Number(process.env.STICKER_BUCKETS) : stickerBucketsOn();
+const stickerRejected = new Map();
 const unknownMakes = new Map();
 const foreign = new Map();
 const unverified = [];
@@ -259,6 +278,14 @@ const listings = raw
       r.priceUsd >= priceFloor({ isNew: condition(r) === "new", year: modelYear(r.year) })
         ? r.priceUsd
         : 0;
+    // Last gate for the sticker pair, after the floor above (an abstain has no
+    // price to judge a flag on): new cars only, plausible sticker, sane
+    // price/sticker ratio, flag bound to this exact price. See lib/sticker.mjs.
+    const sticker = stickerBucketOn(r.vin, STICKER_BUCKETS)
+      ? checkSticker({ ...r, priceUsd, condition: condition(r) })
+      : { fields: {} };
+    if (sticker.reason && sticker.reason !== "not-new" && sticker.reason !== "no-price")
+      stickerRejected.set(sticker.reason, (stickerRejected.get(sticker.reason) ?? 0) + 1);
     return {
       condition: condition(r),
       id: r.vin.toLowerCase(),
@@ -291,6 +318,17 @@ const listings = raw
       // extractors, and a value that isn't one of theirs is dropped rather than
       // written into a column that decides whether a price cut gets published.
       provenance: priceUsd !== 0 && isProvenance(r.priceProvenance) ? r.priceProvenance : undefined,
+      // The car's own MSRP and whether priceUsd has manufacturer incentives
+      // taken off it (true/false), plus priceBeforeIncentivesUsd, the price
+      // that judgement was made about. Unlike provenance these ARE car facts
+      // and stay in the payload; a reader honours the flag only while
+      // priceBeforeIncentivesUsd still equals priceUsd, because 0103's kept
+      // price and recheck's jsonb_set can move priceUsd under it
+      // (web/lib/listings/incentiveBasis.ts). Absent on most rows, and absent is
+      // the honest default. Nothing on the site displays either yet.
+      msrpUsd: sticker.fields.msrpUsd,
+      priceBeforeIncentives: sticker.fields.priceBeforeIncentives,
+      priceBeforeIncentivesUsd: sticker.fields.priceBeforeIncentivesUsd,
       // Platform-extracted odometers (r.platform set) are trusted as-is — 0 is
       // real on a near-new car. JSON-LD-only mileage below 500 is
       // indistinguishable from the junk some SRPs emit, so it renders as
@@ -337,6 +375,8 @@ const listings = raw
     };
   });
 
+if (STICKER_BUCKETS > 0 && stickerRejected.size)
+  console.error(`sticker: withheld MSRP on ${[...stickerRejected].map(([k, n]) => `${n} (${k})`).join(", ")} — lib/sticker.mjs names each rule`);
 for (const [m, n] of unknownMakes) console.error(`dropped ${n} listing(s) with unrecognized make ${JSON.stringify(m)} — real new brand? add it to lib/makes.mjs`);
 for (const [d, n] of unnamed) console.error(`held ${n} listing(s) from ${d} whose model is a placeholder or the listing headline and vPIC could not name the car — see lib/model-trust.mjs`);
 for (const [d, n] of placeholderVins) console.error(`dropped ${n} listing(s) from ${d} whose VIN is an inventory-system placeholder, not a VIN — a car that is on order or in transit and has no VIN yet`);

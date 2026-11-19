@@ -175,6 +175,13 @@ export function mapRecord(r, accounts, origin) {
     // `d.newOrUsed ?? rec.condition`, so an unknown here falls through to the
     // node above rather than becoming a claim.
     newOrUsed: cond,
+    // The machine token alone, for the sticker (dealercom.mjs ddcSticker): a
+    // car whose `type` says nothing gets no MSRP, even when the display string
+    // would have let `newOrUsed` call it new. null = read and absent.
+    machineCondition: conditionToken(r.type) ?? null,
+    // The VDP's typed price ladder (MSRP, dealer rules, incentive rows, the
+    // final price), for ddcLadderBasis. Read, never used to choose the price.
+    ladder: Array.isArray(r.pricing?.dprice) ? r.pricing.dprice : undefined,
     certified: r.certified === true,
     stockNumber: r.stockNumber ? String(r.stockNumber) : undefined,
     accountName: account?.name || addr?.accountName || undefined,
