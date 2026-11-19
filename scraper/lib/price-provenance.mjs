@@ -100,6 +100,13 @@ export const OVERFUEL_PRICE = "overfuel-price";       // Overfuel `price` (never
 // teamvelocity.mjs has the measurements and the 5 rendered-page control tests.
 export const TV_SELLING = "tv-selling";               // Team Velocity sellingPrice (snapshot; new only)
 export const TV_RETAIL = "tv-retail";                 // Team Velocity yourPrice/purchasePrice (live retail)
+// Team Velocity, a NEW car whose stored figure had manufacturer rebates taken
+// out of it, put back from the record's own cash stack (teamvelocity.mjs
+// "PRE-REBATE"). Its own tag, not tv-selling: it is a different number from
+// the one this lane published for the same car the night before, and a shared
+// tag would draw the correction on the chart as a price rise the dealer never
+// made.
+export const TV_PRE_REBATE = "tv-pre-rebate";
 // Motive/ridemotive's Algolia record `price` — the VDP's rendered Final Price
 // (fees included), NOT its `feed_price` rung, which is the same ladder's
 // pre-fee line.
@@ -323,7 +330,7 @@ const KNOWN = new Set([
   JSONLD,
   DDC_INTERNET, DDC_SALE, DDC_ASKING, DDC_MSRP,
   DEOL_INTERNET, DEOL_SELLING, DEOL_MSRP, DEOL_CARD_INTERNET, DEOL_DISPLAYED,
-  DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING, TV_RETAIL,
+  DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING, TV_RETAIL, TV_PRE_REBATE,
   MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
   MOTORCARSITES_PRICE,
   ONEAUDI_SALE, WAYNEREAVES_PRICE, ADD_DISPLAY_PRICE,

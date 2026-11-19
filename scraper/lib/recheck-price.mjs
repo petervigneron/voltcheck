@@ -32,6 +32,14 @@ import { JSONLD, DCS_TILE, DEALR_ENTRY } from "./price-provenance.mjs";
 // genuine markdown first" from "recheck read a different field". Each leg
 // below tags itself with the SAME constant the crawl-side extractor uses for
 // that field, so the first pair matches and the second still does not.
+// What a shopper can read on the page: markup, scripts and styles removed.
+// Deliberately crude — it is only ever asked "is this number printed here?".
+const visibleText = (body) =>
+  String(body ?? "")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ");
+
 export const priceOf = (body, vin, url, l) => {
   const none = { price: null, provenance: undefined };
   // `l.year` is text, not a number: `payload->>year` in the select above
@@ -109,7 +117,16 @@ export const priceOf = (body, vin, url, l) => {
   // numbers at once: both lanes now take the same field for the same page.
   const ddc = extractDdcVehicles(body).find((d) => String(d.vin).toUpperCase() === vin);
   if (ddc) {
-    const r = resolveDdcPriceTagged(rec, ddc);
+    // The page's visible text goes in with the fields, so the resolver can
+    // refuse a tracking field the page never prints (dealercom.mjs "ON THE
+    // PAGE"). When it refuses one, this lane makes no claim at all: such a
+    // page's price belongs to the crawl, which reads the dealer's own price
+    // ladder, and before 2026-11-19 this leg kept re-asserting the hidden
+    // figure — bmwofdenverdowntown.com's 330i at $54,552 against a page that
+    // prints only "MSRP $58,665" — which under 0103 also keeps the crawl's
+    // corrected reading from ever taking the row over.
+    const r = resolveDdcPriceTagged(rec, { ...ddc, pageText: visibleText(body) });
+    if (r.offPage) return none;
     return r.priceUsd > 0 ? { price: r.priceUsd, provenance: r.provenance } : none;
   }
 

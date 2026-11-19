@@ -109,7 +109,7 @@
 import { readFileSync } from "node:fs";
 import { classifyEv } from "../ev.mjs";
 import { politeGetJson } from "../http.mjs";
-import { TV_RETAIL, TV_SELLING } from "../price-provenance.mjs";
+import { TV_PRE_REBATE, TV_RETAIL, TV_SELLING } from "../price-provenance.mjs";
 import { text } from "../normalize.mjs";
 import { stickerDollars, withSticker } from "../sticker.mjs";
 
@@ -197,12 +197,22 @@ function fuelTypeFor(r) {
 }
 
 // Used: the live `yourPrice` wins outright, in both directions.
+// New: then raised to the record's own pre-rebate figure where the fields
+// turn out to be net of rebates — see PRE-REBATE below.
 // New: the HIGHER of the two, because a lower yourPrice there is a conditional
 // rebate rather than a price cut. See the PRICE note up top — the asymmetry is
 // the measured part, not an oversight.
 // `internetPrice` is never read: it is 0 on real cars, and where it is non-zero
 // it just mirrors the stale sellingPrice.
 function teamVelocityPrice(r) {
+  const read = fieldPrice(r);
+  const isNew = String(r?.type ?? "").toLowerCase() === "new";
+  if (!isNew || read.price == null) return read;
+  const before = preRebatePrice(r);
+  return before != null && before > read.price ? { price: before, provenance: TV_PRE_REBATE } : read;
+}
+
+function fieldPrice(r) {
   const snapshot = posNum(r?.sellingPrice);
   const live = posNum(r?.yourPrice) ?? posNum(r?.purchasePrice);
   const isNew = String(r?.type ?? "").toLowerCase() === "new";
@@ -210,6 +220,62 @@ function teamVelocityPrice(r) {
   if (live == null) return { price: snapshot, provenance: TV_SELLING };
   if (isNew && live <= snapshot) return { price: snapshot, provenance: TV_SELLING };
   return { price: live, provenance: TV_RETAIL };
+}
+
+// PRE-REBATE. The rule above rests on "the higher of sellingPrice and
+// yourPrice is the pre-rebate price", and on a share of rooftops it is not:
+// BOTH fields already have the manufacturer's rebates taken out. Measured on
+// 25 rooftops on 2026-11-19 (8,596 priced new cars, whole lots): 1,138 cars,
+// 13%, were published net of rebates — 362 of 869 at parkwayfamilykia.com, 181
+// of 428 at timdahlebountiful.com, 179 of 362 at tempekia.com — by a median
+// $1,500 and as much as $13,500 (mckennacars.com, a 2026 ID.4: msrp 47,932,
+// sellingPrice = yourPrice = 27,932, dealerDiscountedPrice 41,432,
+// cashRebates 13,500). Next to the same model at a rooftop whose fields are
+// pre-rebate, that reads as a bargain the dealer is not offering.
+//
+// The pages show what the money is. tempekia.com, a 2026 Niro: "MSRP $28,930 /
+// Tempe Discount −$2,604 / Kia Customer Cash −$2,000 / Doc Fee +$599 / Paint
+// Protection & Tint +$995 / Tempe Price $25,920". fowlerkialongmont.com, a
+// Sorento: "KFA Dealer Choice Program $2,750" — Kia's finance arm — inside the
+// same headline. The rebate is in the dealer's own advertised figure, and
+// whether a given shopper gets it is exactly what this file's header declines
+// to assume.
+//
+// The record says what the price is without them. With a cash stack,
+// finalPrice = msrp − dealer discount − rebates + fees, so
+//
+//   finalPrice − fees + rebates
+//
+// is MSRP less the dealer's own discount (tempekia: 25,920 − 1,594 + 2,000 =
+// 26,326 = 28,930 − 2,604, the page's first two lines). Where the record also
+// carries dealerDiscountedPrice, the two agreed on 1,171 of 1,171 cars. With
+// no stack, the same figure is dealerDiscountedPrice itself, taken only when
+// the stored number is exactly dealerDiscountedPrice − cashRebates (mckenna's
+// 153). Never above the sticker plus the stack's own dealerMarkup: of the
+// 1,138, none was.
+//
+// Only ever raises. A rooftop whose fields are already pre-rebate reads as it
+// did, and so does every used car.
+function preRebatePrice(r) {
+  const msrp = posNum(r?.msrp);
+  if (msrp == null) return undefined;
+  const ds = r?.dynamicPriceStack?.cash;
+  let before;
+  let ceiling = msrp;
+  if (ds && posNum(ds.finalPrice) != null) {
+    const rebates = posNum(ds.rebates);
+    const fees = Number(ds.fees);
+    if (rebates == null || !Number.isFinite(fees) || fees < 0 || Number(ds.msrp) !== msrp) return undefined;
+    before = Number(ds.finalPrice) - fees + rebates;
+    ceiling += posNum(ds.dealerMarkup) ?? 0;
+  } else if (!ds) {
+    const rebates = posNum(r?.cashRebates);
+    const discounted = posNum(r?.dealerDiscountedPrice);
+    if (rebates == null || discounted == null) return undefined;
+    if (fieldPrice(r).price !== discounted - rebates) return undefined;
+    before = discounted;
+  }
+  return before != null && Number.isInteger(before) && before <= ceiling ? before : undefined;
 }
 
 // The VDP path every Team Velocity storefront serves, whatever the record's

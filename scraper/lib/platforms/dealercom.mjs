@@ -136,12 +136,20 @@ export function resolveDdcPriceTagged(rec, d) {
 
   // DDC selling-price fields that clear the junk floor, sorted low→high, each
   // carrying the name of the field it came from so the winner can be tagged.
+  // …and that the dealer's page actually prints — see "ON THE PAGE" below.
+  const shown = shownOnPage(d);
+  let offPage = false;
   const ddcFields = [
     { price: num(d.internetPrice), provenance: DDC_INTERNET },
     { price: num(d.salePrice), provenance: DDC_SALE },
     { price: num(d.askingPrice), provenance: DDC_ASKING },
   ]
     .filter((f) => f.price != null && f.price >= floor)
+    .filter((f) => {
+      if (!shown || shown(f.price)) return true;
+      offPage = true;
+      return false;
+    })
     .sort((a, b) => a.price - b.price);
   // The lowest DDC field that is a real discount below MSRP (not a >MSRP
   // subtotal). With no MSRP anchor, the lowest plausible field stands in.
@@ -167,6 +175,17 @@ export function resolveDdcPriceTagged(rec, d) {
       // selling fields answer.
       if (msrp != null && ddcDiscount.price < msrp * MIN_TRUSTED_PRICE_FRACTION) return ABSTAIN_RESULT;
       picked = ddcDiscount;
+    } else if (offPage && msrp != null && jsonld === msrp) {
+      // The page prints the sticker and nothing under it; the lower figure the
+      // feed carried was refused as off the page. Named for what it is — the
+      // sticker — rather than as the page's JSON-LD offer, because on this
+      // exact shape the two are not always the same number: stevinsonhyundai
+      // .com's ladder ends on "Stevinson Price $23,723" (= MSRP) while its
+      // VDP's JSON-LD offer is the "Price $24,522" row above the dealer
+      // discount. Recheck reads that offer under the jsonld tag, and a crawl
+      // reading filed under the same tag would have the two take turns on the
+      // headline, $799 apart, with every turn drawn on the chart (0103).
+      picked = { price: jsonld, provenance: DDC_MSRP };
     } else {
       // the dealer's declared price: discount, markup, or used ask
       picked = { price: jsonld, provenance: JSONLD };
@@ -195,11 +214,105 @@ export function resolveDdcPriceTagged(rec, d) {
   }
 
   return picked != null && picked.price >= floor
-    ? { priceUsd: picked.price, provenance: picked.provenance }
-    : ABSTAIN_RESULT;
+    ? { priceUsd: picked.price, provenance: picked.provenance, ...(offPage ? { offPage } : {}) }
+    : offPage
+      ? { ...ABSTAIN_RESULT, offPage }
+      : ABSTAIN_RESULT;
 }
 
 const ABSTAIN_RESULT = { priceUsd: PRICE_ABSTAIN, provenance: undefined };
+
+// ── ON THE PAGE ─────────────────────────────────────────────────────────────
+//
+// dealer.com's tracking fields (internetPrice / salePrice / askingPrice) are
+// the dealer's back-office numbers, and on a share of rooftops one of them is
+// a figure the VDP never prints. The resolver's "a real discount sits below
+// the sticker" branch took the lowest such field on trust, and so published a
+// price no shopper can find on the dealer's page — always LOWER than the page,
+// the false-bargain direction. Read off live rooftops on 2026-11-19, each one
+// opened in a browser and its rendered text searched for both numbers:
+//
+//   stevinsonhyundai.com  Elantra   page "Stevinson Price $23,723"   stored 23,473
+//   bmwofdenverdowntown   330i      page "MSRP $58,665"              stored 54,552
+//   tadgcars.com          Carnival  page "MSRP $53,860"              stored 50,656
+//   mastrovito…           Elantra   page "Total Price $28,990"       stored 26,990
+//   longbeachbmw.com      550e      page "Total Transparent $88,520" stored 83,932
+//   westonvolvocars.com   XC60      page "Final Price $58,653"       stored 51,436
+//   youngkia.com          Sorento   page "Sale Price $37,975"        stored 35,225
+//   toyotaofmckinney.com  4Runner   page "Advertised Price $47,708"  stored 46,983
+//   ecodriveautomall.com  Enclave   page "$59,405 Price"             stored 57,155
+//
+// Nine of nine: the stored number appears nowhere in the page's text. Over
+// 18 rooftops sampled for carrying these tags (6,193 new cars, whole lots, so
+// far above the site-wide share) the rule below moves 1,664 prices: 1,387 up
+// onto the page's figure by a median $2,500, and 277 down from "sticker plus
+// a fee" to the sticker on a rooftop whose price row reads PLEASE_CALL. 223
+// of 225 new cars moved at the BMW store and 217 of 379 at the Volvo store,
+// where one gap was $7,217. Of 2,636 used cars, 6 moved, each onto a printed
+// figure or an abstain. Some of these are probably real "unlock your e-price"
+// figures. They are still not a price this site can stand behind: the dealer
+// does not advertise them, and the house rule is asymmetric on bargains.
+//
+// So a tracking field may be the price only when the page shows it:
+//
+//   API lane   the record's own price ladder (`d.ladder`, pricing.dprice — the
+//              rows the VDP renders) carries a row with that value, or the
+//              value is the ladder's MSRP less its dealer-discount rows. The
+//              second clause is the pre-fee price on rooftops whose only
+//              printed total has the doc fee in it (kennykenttoyota.com: MSRP
+//              $47,888 − "Kenny Kent Savings" $3,270 = internetPrice 44,618,
+//              printed as "Price $44,868" after a $250 fee). A discount row
+//              whose label names a rebate is left out of that sum, so the
+//              derived figure is never net of manufacturer money. A used
+//              car's ladder opens on a "Retail Value" row instead of an MSRP
+//              and the same arithmetic holds (soundford.com, a 2024 i5:
+//              Retail Value $54,999 − Sound Ford Discount $5,228 = 49,771,
+//              printed as "Sale Price $49,971" after a $200 fee).
+//   VDP HTML   (`d.pageText`, recheck) the number, formatted the way a page
+//              prints one, is in the page's visible text. Applied only when
+//              the page demonstrably server-renders prices — some candidate is
+//              visible — so a client-rendered template changes nothing.
+//   neither    no filter; the resolver behaves as it did.
+//
+// A rejected field is reported as `offPage` on the result. The crawl ignores
+// it. recheck-price.mjs uses it to stand down: a VDP that hides a number the
+// feed carries is one whose price the ladder reader owns, and a second reader
+// guessing at it is how a headline starts to flap (0103).
+const dollarsText = (n) => Math.round(n).toLocaleString("en-US");
+
+function shownOnPage(d) {
+  const ladder = Array.isArray(d.ladder) ? d.ladder : null;
+  if (ladder) {
+    const values = new Set();
+    let msrp;
+    let retail;
+    let dealerOff = 0;
+    for (const row of ladder) {
+      const v = ladderNum(row?.value);
+      if (v == null) continue;
+      values.add(v);
+      if (row.typeClass === "msrp" && msrp == null) msrp = v;
+      if (row.typeClass === "retailValue" && retail == null) retail = v;
+      const dealerRule = row.typeClass === "ABCRule" || row.typeClass === "AsubBRule";
+      if (row.type === "-" && dealerRule && !INCENTIVE_WORDS.test(stripTags(row.label))) dealerOff += v;
+    }
+    if (!values.size) return null; // a ladder of PLEASE_CALL rows shows nothing to test against
+    // The ladder's opening figure: the sticker on a new car, the "Retail Value"
+    // / "KBB Price" row a used car's discount is printed against.
+    const anchor = msrp ?? retail;
+    if (anchor != null && dealerOff > 0) values.add(anchor - dealerOff);
+    return (price) => values.has(price);
+  }
+  if (typeof d.pageText === "string" && d.pageText) {
+    const has = (v) => {
+      const n = num(v);
+      return n != null && d.pageText.includes(dollarsText(n));
+    };
+    const rendersPrices = [d.msrp, d.retailValue, d.internetPrice, d.salePrice, d.askingPrice].some(has);
+    return rendersPrices ? (price) => has(price) : null;
+  }
+  return null;
+}
 
 // ── Is the resolved price before manufacturer incentives? ───────────────────
 //

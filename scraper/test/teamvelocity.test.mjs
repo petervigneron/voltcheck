@@ -246,3 +246,58 @@ test("a record that carries its own link keeps it, slug and query included", () 
 test("no map and no origin leaves the car unlinked rather than guessing a host", () => {
   assert.equal(teamVelocityApiVehicle(rec({ dealerID: 7, vdpUrl: "" }), dealerHosts([{ dealerID: 7, vdpUrl: "" }])).offers.url, undefined);
 });
+
+// ── PRE-REBATE (2026-11-19): records read live that day ──────────────────────
+const fresh = (o) => rec({ type: "New", year: "2026", ...o });
+const priced = (o) => { const n = teamVelocityApiVehicle(fresh(o), new Map()); return [n.offers.price, n.offers.priceProvenance]; };
+
+test("new: fields net of a rebate are raised to finalPrice − fees + rebates (tempekia Niro)", () => {
+  assert.deepEqual(
+    priced({ msrp: 28930, sellingPrice: 25321, yourPrice: 24326, cashRebates: 2000, dealerDiscountedPrice: 26326,
+      dynamicPriceStack: { cash: { msrp: 28930, discount: 4198, rebates: 2000, fees: 1594, dealerMarkup: 0, finalPrice: 25920 } } }),
+    [26326, "tv-pre-rebate"],
+  );
+});
+
+test("new: a rooftop already storing the pre-rebate figure reads as before (volvocarssandiego EX30)", () => {
+  assert.deepEqual(
+    priced({ msrp: 48189, sellingPrice: 46945, yourPrice: 45445,
+      dynamicPriceStack: { cash: { msrp: 48189, discount: 3122, rebates: 1500, fees: 122, dealerMarkup: 0, finalPrice: 45567 } } }),
+    [46945, "tv-selling"],
+  );
+});
+
+test("new: no rebate in the stack, nothing to put back", () => {
+  assert.deepEqual(
+    priced({ msrp: 40000, sellingPrice: 38000, yourPrice: 38000,
+      dynamicPriceStack: { cash: { msrp: 40000, discount: 2000, rebates: 0, fees: 500, dealerMarkup: 0, finalPrice: 38500 } } }),
+    [38000, "tv-selling"],
+  );
+});
+
+test("new: a stack whose msrp is not the record's is not trusted", () => {
+  assert.deepEqual(
+    priced({ msrp: 40000, sellingPrice: 36000, yourPrice: 36000,
+      dynamicPriceStack: { cash: { msrp: 41000, discount: 2000, rebates: 2000, fees: 500, dealerMarkup: 0, finalPrice: 36500 } } }),
+    [36000, "tv-selling"],
+  );
+});
+
+test("new: a rebuilt figure above the sticker is not published", () => {
+  assert.deepEqual(
+    priced({ msrp: 40000, sellingPrice: 39000, yourPrice: 39000,
+      dynamicPriceStack: { cash: { msrp: 40000, discount: 0, rebates: 2000, fees: 0, dealerMarkup: 0, finalPrice: 39000 } } }),
+    [39000, "tv-selling"],
+  );
+});
+
+test("new, no stack: dealerDiscountedPrice only when the stored figure is exactly it less cashRebates (mckennacars Jetta)", () => {
+  assert.deepEqual(priced({ msrp: 26491, sellingPrice: 24741, yourPrice: 24741, cashRebates: 500, dealerDiscountedPrice: 25241 }), [25241, "tv-pre-rebate"]);
+  assert.deepEqual(priced({ msrp: 26491, sellingPrice: 24900, yourPrice: 24900, cashRebates: 500, dealerDiscountedPrice: 25241 }), [24900, "tv-selling"]);
+});
+
+test("used: never raised, whatever the record carries", () => {
+  const n = teamVelocityApiVehicle(rec({ type: "Used", msrp: 28930, sellingPrice: 25321, yourPrice: 24326, cashRebates: 2000,
+    dynamicPriceStack: { cash: { msrp: 28930, discount: 4198, rebates: 2000, fees: 1594, finalPrice: 25920 } } }), new Map());
+  assert.deepEqual([n.offers.price, n.offers.priceProvenance], [24326, "tv-retail"]);
+});

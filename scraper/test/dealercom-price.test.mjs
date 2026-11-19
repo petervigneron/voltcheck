@@ -211,3 +211,160 @@ test("a used car's advertised DDC field still wins over its book value (camelbac
   );
   assert.equal(got.priceUsd, 34990);
 });
+
+// ── ON THE PAGE (2026-11-19) ────────────────────────────────────────────────
+// Each ladder is the record's own pricing.dprice, read live that day; each
+// `want` was confirmed by opening the VDP and searching its rendered text.
+const row = (type, typeClass, label, value, isFinalPrice) => ({ type, typeClass, label, value, ...(isFinalPrice ? { isFinalPrice } : {}) });
+const onPage = ({ jsonld, tp, ladder, pageText, newOrUsed = "new", year = 2026 }) =>
+  resolveDdcPriceTagged({ priceUsd: jsonld, condition: newOrUsed, year }, { ...tp, newOrUsed, ladder, pageText });
+
+test("a tracking field the ladder never prints is not the price (stevinsonhyundai Elantra)", () => {
+  const r = onPage({
+    jsonld: 23723,
+    tp: { internetPrice: "23473", salePrice: "$24,522", msrp: "$23,723", askingPrice: "$23,723" },
+    ladder: [
+      row("MIDDLE", "msrp", "MSRP", "$23,723"),
+      row("MIDDLE", "wholesalePrice", "Delivery & Handling Fee", "$799"),
+      row("MIDDLE", "salePrice", "Price", "$24,522"),
+      row("-", "ABCRule", "Dealer Discount", "$799"),
+      row("TOTAL", "askingPrice", "Stevinson Price", "$23,723", true),
+    ],
+  });
+  assert.equal(r.priceUsd, 23723);
+  // the sticker, and tagged as the sticker: this VDP's JSON-LD offer is 24,522
+  assert.equal(r.provenance, "ddc-msrp");
+  assert.equal(r.offPage, true);
+});
+
+test("a hidden figure $7,217 under the page's final price is refused (westonvolvocars XC60)", () => {
+  const r = onPage({
+    jsonld: 58653,
+    tp: { internetPrice: "$60,153", salePrice: "53936", msrp: "$58,555", askingPrice: "51436" },
+    ladder: [
+      row("MIDDLE", "msrp", "MSRP", "$58,555"),
+      row("MIDDLE", "invoicePrice", "Dealer Fee", "$1,199"),
+      row("MIDDLE", "retailValue", "Electronic Filing Fee", "$399"),
+      row("TOTAL", "internetPrice", "Final Price", "$60,153"),
+      row("SICI", "SICRule", "Offers", "$1,500"),
+      row("SIF", "SIFRule", "Final Price", "$58,653", true),
+    ],
+  });
+  assert.equal(r.priceUsd, 58653);
+});
+
+test("a field the ladder prints still wins over an echoed sticker (ecodriveautomall Equinox)", () => {
+  const r = onPage({
+    jsonld: 35555,
+    year: 2027,
+    tp: { internetPrice: "34656", salePrice: "$35,555", msrp: "$35,540", askingPrice: "34656" },
+    ladder: [
+      row("MIDDLE", "msrp", "MSRP", "$35,540"),
+      row("-", "AsubBRule", "Dealer Discount", "$884"),
+      row("MIDDLE", "wholesalePrice", "Featured Price", "$34,656"),
+      row("MIDDLE", "invoicePrice", "Doc Fee", "$899"),
+      row("TOTAL", "salePrice", "Price", "$35,555", true),
+    ],
+  });
+  assert.deepEqual({ price: r.priceUsd, provenance: r.provenance, offPage: r.offPage }, { price: 34656, provenance: "ddc-internet", offPage: undefined });
+});
+
+test("sticker less the printed dealer discount counts as printed: the pre-fee price (kennykenttoyota 4Runner)", () => {
+  const r = onPage({
+    jsonld: 399,
+    tp: { internetPrice: "44618", salePrice: "47888", msrp: "$47,888", askingPrice: "$399" },
+    ladder: [
+      row("MIDDLE", "msrp", "Total SRP", "$47,888"),
+      row("-", "ABCRule", "Kenny Kent Savings", "$3,270"),
+      row("MIDDLE", "totalFees", "Doc Prep Fee", "$250"),
+      row("MIDDLE", "priceAfterFees", "Price", "$44,868"),
+      row("TOTAL", "askingPrice", "Dealer-Added Optional Accessories", "$399", true),
+    ],
+  });
+  assert.equal(r.priceUsd, 44618);
+});
+
+test("a discount row that names a rebate is left out of that arithmetic", () => {
+  const r = onPage({
+    jsonld: 399,
+    tp: { internetPrice: "40000", msrp: "$47,000" },
+    ladder: [
+      row("MIDDLE", "msrp", "MSRP", "$47,000"),
+      row("-", "ABCRule", "Dealer Discount", "$4,000"),
+      row("-", "AsubBRule", "Ford Rebates", "$3,000"),
+      row("TOTAL", "askingPrice", "Accessories", "$399", true),
+    ],
+  });
+  assert.equal(r.priceUsd, 47000); // 40,000 is net of the rebate and printed nowhere: the sticker stands
+  assert.equal(r.provenance, "ddc-msrp");
+});
+
+test("a used ladder opens on Retail Value and the same arithmetic holds (soundford i5)", () => {
+  const r = onPage({
+    jsonld: 5228,
+    newOrUsed: "used",
+    year: 2024,
+    tp: { internetPrice: "49771", salePrice: "$49,971", msrp: "54999", askingPrice: "60227" },
+    ladder: [
+      row("MIDDLE", "retailValue", "Retail Value", "$54,999"),
+      row("-", "AsubBRule", "Sound Ford Discount", "$5,228"),
+      row("MIDDLE", "documentFee", "Negotiable Doc Fee", "$200"),
+      row("MIDDLE", "salePrice", "Sale Price**", "$49,971"),
+      row("TOTAL", "wholesalePrice", "Total Savings", "$5,228", true),
+    ],
+  });
+  assert.equal(r.priceUsd, 49771);
+});
+
+test("a used car whose only figure is off the ladder abstains (kennykenttoyota Land Cruiser, page: PLEASE_CALL)", () => {
+  const r = onPage({
+    jsonld: 399,
+    newOrUsed: "used",
+    year: 2024,
+    tp: { internetPrice: "PLEASE_CALL", salePrice: "58552", msrp: "61995", askingPrice: "$399" },
+    ladder: [
+      row("MIDDLE", "retailValue", "Retail Value", "$61,995"),
+      row("UNKNOWN", "internetPrice", "Price", "PLEASE_CALL"),
+      row("MIDDLE", "totalFees", "Doc Prep Fee", "$250"),
+      row("TOTAL", "askingPrice", "Dealer-Added Optional Accessories", "$399", true),
+    ],
+  });
+  assert.equal(r.priceUsd, PRICE_ABSTAIN);
+  assert.equal(r.offPage, true);
+});
+
+test("a ladder with no figure on it is no evidence: the resolver reads as before (cityworldtoyota)", () => {
+  const r = onPage({
+    jsonld: undefined,
+    year: 2027,
+    tp: { internetPrice: "63613", msrp: "63613", askingPrice: "63613" },
+    ladder: [row("UNKNOWN", "retailValue", "Total SRP", "PLEASE_CALL")],
+  });
+  assert.equal(r.priceUsd, 63613);
+  assert.equal(r.offPage, undefined);
+});
+
+test("no ladder and no page text: unchanged", () => {
+  const r = onPage({ jsonld: 58665, tp: { internetPrice: "58665", salePrice: "54552", msrp: "$58,665", askingPrice: "54552" } });
+  assert.equal(r.priceUsd, 54552);
+});
+
+test("VDP text: a figure the page does not print is refused and reported", () => {
+  const tp = { internetPrice: "58665", salePrice: "54552", msrp: "58665", askingPrice: "54552" };
+  const r = onPage({ jsonld: 58665, tp, pageText: "MSRP No Hidden Fees $58,665 Get Your Price" });
+  assert.equal(r.priceUsd, 58665);
+  assert.equal(r.offPage, true);
+  // …and one it does print is taken as before.
+  const shown = onPage({ jsonld: 58665, tp, pageText: "MSRP $58,665 Our Price $54,552" });
+  assert.deepEqual({ price: shown.priceUsd, offPage: shown.offPage }, { price: 54552, offPage: undefined });
+});
+
+test("VDP text that prints no candidate at all is a client-rendered page: unchanged", () => {
+  const r = onPage({
+    jsonld: 58665,
+    tp: { internetPrice: "58665", salePrice: "54552", msrp: "58665", askingPrice: "54552" },
+    pageText: "Loading vehicle details",
+  });
+  assert.equal(r.priceUsd, 54552);
+  assert.equal(r.offPage, undefined);
+});

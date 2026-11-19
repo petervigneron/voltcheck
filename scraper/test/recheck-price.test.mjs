@@ -79,3 +79,25 @@ test("a junk offer with no other price to fall back on writes nothing", () => {
   assert.equal(r.price, null);
   assert.equal(r.provenance, undefined);
 });
+
+// ── dealer.com: a figure the page does not print (2026-11-19) ────────────────
+// bmwofdenverdowntown.com's 330i, fields as its VDP served them. The page
+// prints "MSRP No Hidden Fees $58,665" and nothing else; salePrice and
+// askingPrice carry 54,552, which is in the page's script and not in its text.
+const BMW = "3MW89CW03T8G68741";
+const ddcPage = (visible) => `<html><body><script>DDC.dataLayer['vehicles'] = [${JSON.stringify({
+  vin: BMW, msrp: "58665", internetPrice: "58665", salePrice: "54552", askingPrice: "54552", newOrUsed: "new",
+})}];</script><div class="pricing">${visible}</div></body></html>`;
+const bmwOffer = `<script type="application/ld+json">${JSON.stringify({
+  "@type": "Car", vehicleIdentificationNumber: BMW, offers: { "@type": "Offer", price: 58665 },
+})}</script>`;
+
+test("dealer.com: recheck makes no claim on a page that hides a figure the feed carries", () => {
+  const r = priceOf(bmwOffer + ddcPage("MSRP No Hidden Fees $58,665 Get Your Price"), BMW, "https://www.bmwofdenverdowntown.com/new/x.htm", { condition: "new", year: "2026" });
+  assert.deepEqual(r, { price: null, provenance: undefined });
+});
+
+test("dealer.com: recheck still reads a discount the page prints", () => {
+  const r = priceOf(bmwOffer + ddcPage("MSRP $58,665 Sale Price $54,552"), BMW, "https://www.bmwofdenverdowntown.com/new/x.htm", { condition: "new", year: "2026" });
+  assert.deepEqual(r, { price: 54552, provenance: "ddc-sale" });
+});

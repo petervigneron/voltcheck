@@ -127,11 +127,16 @@ test("dealer.com: a TOTAL row above only dealer rules is before incentives (Mark
   assert.deepEqual(pick(ddc(F.ddcMarkup)), { priceUsd: 230982, msrpUsd: 215860, priceBeforeIncentives: true, priceBeforeIncentivesUsd: 230982 });
 });
 
-test("dealer.com: a price from a trackingPricing field off the ladder gets the sticker, no flag", () => {
+// Until 2026-11-19 this car resolved to trackingPricing.internetPrice, 45,954 —
+// a figure the page prints nowhere — and so carried no flag. The resolver now
+// refuses an off-page field (dealercom.mjs "ON THE PAGE") and the price is the
+// ladder's final row, "Stevinson Price" — which askingPrice also carries, and
+// being $21 under the sticker it is that field the resolver names.
+test("dealer.com: a trackingPricing field off the ladder is not the price; the final row is", () => {
   const r = ddc(F.ddcInternet);
-  assert.equal(r.priceUsd, 45954);
+  assert.equal(r.priceUsd, 46204);
+  assert.equal(r.priceProvenance, "ddc-asking");
   assert.equal(r.msrpUsd, 46225);
-  assert.equal(r.priceBeforeIncentives, undefined);
 });
 
 test("dealer.com: a used car's msrp is book value and is never stored", () => {
@@ -202,12 +207,15 @@ test("Team Velocity: stored = stack total before rebates → true (volvocarssand
   assert.deepEqual(pick(tv(F.tvVolvo)), { priceUsd: 46945, msrpUsd: 49945, priceBeforeIncentives: true, priceBeforeIncentivesUsd: 46945 });
 });
 
-test("Team Velocity: stored = stack total net of rebates → false (parkwayfamilykia EV3)", () => {
-  assert.deepEqual(pick(tv(F.tvParkway)), { priceUsd: 33416, msrpUsd: 36485, priceBeforeIncentives: false, priceBeforeIncentivesUsd: 33416 });
+// Both of these were published net of rebates, flagged false, until 2026-11-19.
+// teamvelocity.mjs "PRE-REBATE" now puts the rebates back from the record.
+test("Team Velocity: fields net of rebates are raised to the stack's pre-rebate figure (parkwayfamilykia EV3)", () => {
+  assert.deepEqual(pick(tv(F.tvParkway)), { priceUsd: 34916, msrpUsd: 36485, priceBeforeIncentives: true, priceBeforeIncentivesUsd: 34916 });
 });
-
-test("Team Velocity: no stack, dealerDiscountedPrice − cashRebates → false (mckennacars ID.4)", () => {
-  assert.equal(tv(F.tvMckenna).priceBeforeIncentives, false);
+test("Team Velocity: no stack, a price of dealerDiscountedPrice less cashRebates becomes dealerDiscountedPrice (mckennacars ID.4)", () => {
+  const r = tv(F.tvMckenna);
+  assert.equal(r.priceUsd, 44472);
+  assert.equal(r.priceBeforeIncentives, undefined);
 });
 
 test("Team Velocity: nothing that explains the gap → sticker only (ggkia EV3)", () => {
