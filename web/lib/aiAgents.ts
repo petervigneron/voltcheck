@@ -7,8 +7,11 @@
 // the fetch by label and page kind (migration 0127, agent_fetches), and
 // passes the request through untouched.
 //
-// Nothing about the request is kept beyond the two labels: no path, VIN, ZIP,
-// IP or user-agent string. Both lists are closed, and 0127's
+// Nothing about the request is kept beyond the two labels: no path, ZIP, IP
+// or user-agent string — with one addition since 2026-11-19 (migration 0128):
+// when a "-user" assistant fetches one car's page, the car's VIN is counted
+// too, by day and assistant. A VIN names a car for sale, not a person, and
+// crawlers are never counted that way. Both lists are closed, and 0127's
 // agent_fetch_bump() holds the same two lists and refuses anything else, so
 // a label added here must be added there in the next migration.
 //
@@ -110,4 +113,14 @@ export function pageKind(pathname: string): PageKind {
   }
   if (/^llms(?:-full)?\.txt$/.test(seg)) return "llms";
   return "other";
+}
+
+/** The car a path is about: the VIN of a listing page or of the public API's
+ *  single-listing record. Null for every other path, and for anything in that
+ *  position that is not VIN-shaped. */
+export function fetchedCar(pathname: string): string | null {
+  const m = /^\/(?:listing|api\/v1\/listings)\/([A-Za-z0-9]{17})(?:[/?#-]|$)/.exec(pathname);
+  if (!m) return null;
+  const vin = m[1].toUpperCase();
+  return /^[A-HJ-NPR-Z0-9]{17}$/.test(vin) ? vin : null;
 }

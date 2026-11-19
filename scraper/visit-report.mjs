@@ -175,3 +175,26 @@ try {
 } catch (e) {
   console.error(`visit-report: AI assistant counts skipped: ${e.message}`);
 }
+
+// Which cars those assistants looked up for the people asking them
+// (migration 0128, agent_car_fetches): "-user" assistants only, a VIN and a
+// count per UTC day. The ten most-fetched, and how many cars in all.
+try {
+  const cars = await rows("agent_car_fetches", `select=agent,vin,n&day=gt.${day(start)}&day=lte.${day(now)}`);
+  const byVin = new Map();
+  for (const c of cars) {
+    const v = byVin.get(c.vin) ?? { total: 0, agents: new Set() };
+    v.total += Number(c.n);
+    v.agents.add(c.agent);
+    byVin.set(c.vin, v);
+  }
+  if (byVin.size) {
+    const total = [...byVin.values()].reduce((s, v) => s + v.total, 0);
+    console.log("");
+    console.log(`Cars assistants looked up for people: ${byVin.size} cars, ${total} fetches`);
+    for (const [vin, v] of [...byVin].sort((x, y) => y[1].total - x[1].total).slice(0, 10))
+      console.log(`  ${vin}  ${String(v.total).padStart(4)}  ${[...v.agents].sort().join(", ")}`);
+  }
+} catch (e) {
+  console.error(`visit-report: cars looked up by assistants skipped: ${e.message}`);
+}

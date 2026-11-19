@@ -110,8 +110,10 @@ test("for an assistant the proxy passes the request through untouched, and count
     assert.deepEqual(headers, ["x-middleware-next"]);
     assert.equal(waited.length, 1);
     await Promise.all(waited);
+    // The kind, and — a "-user" assistant on one car's page — the car.
     assert.deepEqual(calls, [
       { url: "https://db.example/rest/v1/rpc/agent_fetch_bump", body: JSON.stringify({ _agent: "claude-user", _kind: "listing" }) },
+      { url: "https://db.example/rest/v1/rpc/agent_car_fetch_bump", body: JSON.stringify({ _agent: "claude-user", _vin: "5YJ3E1EA5RF824810" }) },
     ]);
   } finally {
     globalThis.fetch = realFetch;
@@ -136,6 +138,36 @@ test("a failed count never reaches the response", async () => {
     const res = await proxy(new NextRequest("https://censusev.com/", { headers: { "user-agent": REAL[0][0] } }), event);
     assert.equal(res.headers.get("x-middleware-next"), "1");
     await assert.doesNotReject(Promise.all(waited));
+  } finally {
+    globalThis.fetch = realFetch;
+    process.env.SUPABASE_URL = saved.url;
+    process.env.SUPABASE_ANON_KEY = saved.key;
+    if (saved.url === undefined) delete process.env.SUPABASE_URL;
+    if (saved.key === undefined) delete process.env.SUPABASE_ANON_KEY;
+  }
+});
+
+test("a crawler on a car's page counts the page kind and never the car", async () => {
+  const waited: Promise<unknown>[] = [];
+  const event = { waitUntil: (p: Promise<unknown>) => waited.push(p) } as never;
+  const realFetch = globalThis.fetch;
+  const saved = { url: process.env.SUPABASE_URL, key: process.env.SUPABASE_ANON_KEY };
+  process.env.SUPABASE_URL = "https://db.example";
+  process.env.SUPABASE_ANON_KEY = "anon";
+  const urls: string[] = [];
+  globalThis.fetch = (async (url: string) => {
+    urls.push(String(url));
+    return new Response(null, { status: 204 });
+  }) as typeof fetch;
+  try {
+    // GPTBot, OAI-SearchBot and Meta's crawler: REAL[0], REAL[1], REAL[10].
+    for (const i of [0, 1, 10])
+      await proxy(new NextRequest("https://censusev.com/listing/5YJ3E1EA5RF824810", { headers: { "user-agent": REAL[i][0] } }), event);
+    // …and a person's assistant on a page that is not one car's.
+    await proxy(new NextRequest("https://censusev.com/ev/kia/ev6", { headers: { "user-agent": REAL[2][0] } }), event);
+    await Promise.all(waited);
+    assert.equal(urls.length, 4);
+    assert.ok(urls.every((u) => u.endsWith("/rpc/agent_fetch_bump")));
   } finally {
     globalThis.fetch = realFetch;
     process.env.SUPABASE_URL = saved.url;

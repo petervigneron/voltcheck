@@ -11,7 +11,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { AI_AGENT_LABELS, AI_AGENT_TOKENS, PAGE_KINDS, aiAgentLabel, onBehalfOfPerson, pageKind } from "../lib/aiAgents";
+import { AI_AGENT_LABELS, AI_AGENT_TOKENS, PAGE_KINDS, aiAgentLabel, fetchedCar, onBehalfOfPerson, pageKind } from "../lib/aiAgents";
 
 // User-agents as the companies publish them.
 const REAL: [string, string][] = [
@@ -115,4 +115,21 @@ test("a page folds to its family, never to its path", () => {
   ];
   for (const [path, kind] of cases) assert.equal(pageKind(path), kind, path);
   for (const [path] of cases) assert.ok((PAGE_KINDS as readonly string[]).includes(pageKind(path)));
+});
+
+test("the car a path is about: listing pages and the API record, nothing else", () => {
+  assert.equal(fetchedCar("/listing/5YJ3E1EA5RF824810"), "5YJ3E1EA5RF824810");
+  assert.equal(fetchedCar("/listing/5yj3e1ea5rf824810/"), "5YJ3E1EA5RF824810");
+  assert.equal(fetchedCar("/api/v1/listings/5YJ3E1EA5RF824810"), "5YJ3E1EA5RF824810");
+  // I, O and Q are not VIN characters; too long, too short, wrong place.
+  for (const p of ["/listing/5YJ3E1EA5RF82481O", "/listing/5YJ3E1EA5RF8248100", "/listing/5YJ3E1EA5RF82481", "/listing/x", "/ev/kia/ev6", "/go/5YJ3E1EA5RF824810", "/vin/5YJ3E1EA5RF824810", "/", "/api/v1/listings"])
+    assert.equal(fetchedCar(p), null, p);
+});
+
+test("0128 counts cars for the -user assistants and no one else", () => {
+  const sql = readFileSync(new URL("../../supabase/migrations/0128_agent_car_fetches.sql", import.meta.url), "utf8");
+  const m = /people\s+constant\s+text\[\]\s*:=\s*array\[([^\]]*)\]/i.exec(sql);
+  assert.ok(m, "people not found in 0128");
+  const listed = [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]).sort();
+  assert.deepEqual(listed, AI_AGENT_LABELS.filter(onBehalfOfPerson).sort());
 });

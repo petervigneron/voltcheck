@@ -1,5 +1,5 @@
 import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
-import { aiAgentLabel, pageKind } from "@/lib/aiAgents";
+import { aiAgentLabel, fetchedCar, onBehalfOfPerson, pageKind } from "@/lib/aiAgents";
 import { AT_COOKIE, RT_COOKIE, clearedCookies, needsRefresh, refreshSession, sessionCookies } from "@/lib/authCore";
 
 // Keeps a signed-in shopper signed in. The access token (vc_at) lasts an
@@ -34,15 +34,15 @@ import { AT_COOKIE, RT_COOKIE, clearedCookies, needsRefresh, refreshSession, ses
 
 /** One count per fetch, after the response. Short timeout, never throws: a
  *  lost count is a smaller cost than a slower page for the assistant. */
-async function countAgentFetch(agent: string, kind: string): Promise<void> {
+async function bump(fn: string, args: Record<string, string>): Promise<void> {
   const base = process.env.SUPABASE_URL?.replace(/\/$/, "");
   const key = process.env.SUPABASE_ANON_KEY;
   if (!base || !key) return;
   try {
-    await fetch(`${base}/rest/v1/rpc/agent_fetch_bump`, {
+    await fetch(`${base}/rest/v1/rpc/${fn}`, {
       method: "POST",
       headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ _agent: agent, _kind: kind }),
+      body: JSON.stringify(args),
       cache: "no-store",
       signal: AbortSignal.timeout(1500),
     });
@@ -51,10 +51,20 @@ async function countAgentFetch(agent: string, kind: string): Promise<void> {
   }
 }
 
+/** The fetch by assistant and page kind, always; and, when an assistant
+ *  fetched one car's page for a person asking it, that car (migration 0128).
+ *  A crawler's fetch of the same page counts the kind and never the car. */
+async function countAgentFetch(agent: string, pathname: string): Promise<void> {
+  const counts = [bump("agent_fetch_bump", { _agent: agent, _kind: pageKind(pathname) })];
+  const vin = onBehalfOfPerson(agent) ? fetchedCar(pathname) : null;
+  if (vin) counts.push(bump("agent_car_fetch_bump", { _agent: agent, _vin: vin }));
+  await Promise.all(counts);
+}
+
 export async function proxy(req: NextRequest, event?: NextFetchEvent): Promise<NextResponse> {
   const agent = aiAgentLabel(req.headers.get("user-agent"));
   if (agent) {
-    event?.waitUntil(countAgentFetch(agent, pageKind(req.nextUrl.pathname)));
+    event?.waitUntil(countAgentFetch(agent, req.nextUrl.pathname));
     return NextResponse.next();
   }
 
