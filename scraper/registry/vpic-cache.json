@@ -3676,7 +3676,8 @@
 {"Series":"Sportback","Trim":"quattro Premium Plus","DriveType":"AWD/All-Wheel Drive","BatteryKWh":"","ElectrificationLevel":"","FuelTypePrimary":"Gasoline","FuelTypeSecondary":"","Make":"AUDI","Model":"A5"},
 {"Series":"","Trim":"Premium, S-Premium","DriveType":"4WD/4-Wheel Drive/4x4","BatteryKWh":"","ElectrificationLevel":"Mild HEV (Hybrid Electric Vehicle)","FuelTypePrimary":"Gasoline","FuelTypeSecondary":"Electric","Make":"MAZDA","Model":"CX-70"},
 {"Series":"MHU33L/MHU38L","Trim":"400h","DriveType":"4WD/4-Wheel Drive/4x4","BatteryKWh":"","ElectrificationLevel":"Strong HEV (Hybrid Electric Vehicle)","FuelTypePrimary":"Gasoline","FuelTypeSecondary":"Electric","Make":"LEXUS","Model":"RX"},
-{"Series":"ASA44L/ASA42L/AVA44L","Trim":"LE","DriveType":"4WD/4-Wheel Drive/4x4","BatteryKWh":"","ElectrificationLevel":"","FuelTypePrimary":"Gasoline","FuelTypeSecondary":"","Make":"TOYOTA","Model":"RAV4"}
+{"Series":"ASA44L/ASA42L/AVA44L","Trim":"LE","DriveType":"4WD/4-Wheel Drive/4x4","BatteryKWh":"","ElectrificationLevel":"","FuelTypePrimary":"Gasoline","FuelTypeSecondary":"","Make":"TOYOTA","Model":"RAV4"},
+{"Series":"20 Series","Trim":"","DriveType":"4x2","BatteryKWh":"","ElectrificationLevel":"BEV (Battery Electric Vehicle)","FuelTypePrimary":"Electric","FuelTypeSecondary":"","Make":"LEXUS","Model":"RZ"}
 ],"vins":{
 "1N4BZ1BV3NC564248":[0,20686],
 "1HGCV3F9XKA018395":[1,20686],
@@ -442157,5 +442158,17 @@
 "WB523CF07RCP34277":[658,20777],
 "JN1CF0BB2RM743441":[2166,20777],
 "JN1DF0BB2RM734128":[2166,20777],
-"2C4RC1N7XMR545192":[2526,20777]
+"2C4RC1N7XMR545192":[2526,20777],
+"KNDPYDDH9V7482190":[2263,20777],
+"5XYAB5S15VG032249":[2895,20777],
+"7SAYGDED2SF319702":[2372,20777],
+"7SAYGAEEXRF020363":[1367,20777],
+"1C4JJXR61PW620770":[2219,20777],
+"WBY33FK0XRCP62556":[2315,20777],
+"JTJBDADB2VA014737":[3678,20777],
+"JTJBDADB1V147CL68":[3678,20777],
+"JTJBDADB2V147CL77":[3678,20777],
+"JTJBDADB9VA014797":[3678,20777],
+"3FMTK2SU7PMA99972":[2349,20777],
+"7SAYGDED8PF958710":[1367,20777]
 }}
